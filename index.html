@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>高中地科：克卜勒行星運動互動教學</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #070923;
+    --surface: rgba(10, 18, 42, 0.92);
+    --surface-strong: rgba(21, 30, 66, 0.96);
+    --accent: #8fc1ff;
+    --accent2: #e0aaff;
+    --text: #f3f6ff;
+    --muted: #9fb4d1;
+    --success: #6ade8f;
+    --danger: #ff6b82;
+    --card: rgba(255,255,255,0.05);
+    --shadow: 0 20px 70px rgba(0,0,0,.32);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Roboto, Arial, "Noto Sans TC", sans-serif;
+    background: radial-gradient(circle at top, #0d1b47 0%, #030511 45%, #05040f 100%);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.14) 1px, transparent 1px), radial-gradient(circle, rgba(152, 176, 255, 0.08) 2px, transparent 2px);
+    background-size: 80px 80px, 150px 150px;
+    opacity: 0.24;
+    pointer-events: none;
+    z-index: 0;
+  }
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+  header {
+    display: grid;
+    gap: 18px;
+    padding: 18px 18px 24px;
+    background: linear-gradient(180deg, rgba(10,18,42,.96), rgba(2,6,20,.84));
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+  }
+  header h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.05;
+  }
+  header p {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
+  .layout {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: 1.5fr 1fr;
+    align-items: start;
+  }
+  .panel, .quiz-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  .panel h2, .quiz-card h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  .canvas-shell {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    min-height: 420px;
+    border-radius: 24px;
+    overflow: hidden;
+    background: radial-gradient(circle at 70% 20%, rgba(124, 196, 255, 0.12), transparent 22%), radial-gradient(circle at 25% 70%, rgba(214, 138, 255, 0.1), transparent 19%), #020314;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .controls {
+    display: grid;
+    gap: 16px;
+  }
+  .slider-row {
+    display: grid;
+    gap: 10px;
+  }
+  label {
+    font-size: .95rem;
+    color: var(--text);
+  }
+  input[type="range"] {
+    width: 100%;
+  }
+  .value-tag {
+    display: inline-flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: .92rem;
+    color: var(--muted);
+  }
+  .stats {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .stat-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    font-size: .98rem;
+    padding: 14px 16px;
+    background: rgba(255,255,255,.04);
+    border-radius: 16px;
+  }
+  .stat-item strong {
+    color: var(--accent);
+  }
+  .buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .button {
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(143,193,255,.96), rgba(224,170,255,.88));
+    color: #061025;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .2s, filter .2s;
+  }
+  .button:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .formula-grid {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .formula-card {
+    padding: 18px;
+    border-radius: 18px;
+    background: rgba(14, 28, 59, 0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .formula-card p {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: .95rem;
+  }
+  .formula-card code {
+    display: block;
+    background: rgba(255,255,255,.05);
+    padding: 10px 12px;
+    border-radius: 14px;
+    color: #c9e3ff;
+    font-size: 0.96rem;
+  }
+  .quiz-card {
+    margin-top: 24px;
+  }
+  .question {
+    margin-bottom: 18px;
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .question strong { display: block; margin-bottom: 8px; }
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+  .option {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .option:hover { background: rgba(143,193,255,0.08); }
+  .option input { accent-color: #8fc1ff; }
+  .feedback {
+    margin-top: 12px;
+    min-height: 24px;
+    color: var(--success);
+    font-weight: 700;
+  }
+  .feedback.incorrect { color: var(--danger); }
+  footer {
+    margin-top: 40px;
+    display: grid;
+    gap: 14px;
+    color: var(--muted);
+    font-size: .92rem;
+  }
+  .note {
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 660px) {
+    main { padding: 18px 14px 40px; }
+    .panel, .quiz-card { padding: 18px; }
+    .control-grid { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>高中地科：克卜勒行星運動互動教學</h1>
+      <p>主題：克卜勒三大行星運動定律 · 對象：高中一年級 · 目標：理解橢圓軌道、面積速率守恆、週期與距離的關係。</p>
+    </div>
+  </header>
+
+  <section class="layout">
+    <article class="panel">
+      <h2>動態視覺化</h2>
+      <div class="canvas-shell">
+        <canvas id="orbitCanvas" width="1200" height="900"></canvas>
+      </div>
+      <div class="buttons">
+        <button class="button" id="toggleBtn">暫停</button>
+        <button class="button" id="resetBtn">重置參數</button>
+      </div>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="eccentricity">離心率 e：<span id="eccVal">0.30</span></label>
+          <input id="eccentricity" type="range" min="0" max="0.85" step="0.01" value="0.30" />
+        </div>
+        <div class="slider-row">
+          <label for="semiMajor">軌道半長軸 a（相對距離）：<span id="semiVal">1.00</span></label>
+          <input id="semiMajor" type="range" min="0.6" max="1.8" step="0.02" value="1.0" />
+        </div>
+        <div class="slider-row">
+          <label for="mass">行星質量 m（相對質量）：<span id="massVal">1.00</span></label>
+          <input id="mass" type="range" min="0.2" max="5.0" step="0.1" value="1.0" />
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-item"><span>近日點距離 q</span><strong id="perihelion">0.70</strong></div>
+        <div class="stat-item"><span>遠日點距離 Q</span><strong id="aphelion">1.30</strong></div>
+        <div class="stat-item"><span>週期 T（相對單位）</span><strong id="period">1.00</strong></div>
+        <div class="stat-item"><span>當前速度 v</span><strong id="speed">1.00</strong></div>
+      </div>
+      <div class="formula-grid">
+        <div class="formula-card">
+          <p>1. 椭圓轨道公式</p>
+          <code>r(θ) = a(1 - e²) / (1 + e cos θ)</code>
+        </div>
+        <div class="formula-card">
+          <p>2. 面積速率守恆（克卜勒第二定律）</p>
+          <code>r²·dθ/dt = 常數</code>
+        </div>
+        <div class="formula-card">
+          <p>3. 週期與半長軸關係（第三定律）</p>
+          <code>T² ∝ a³</code>
+        </div>
+      </div>
+    </article>
+
+    <aside class="panel">
+      <h2>重點說明</h2>
+      <p>此互動教學以克卜勒行星運動定律為核心，透過橢圓軌道動畫顯示：當行星接近近日點時速度提高，遠日點時速度變慢；同時調整離心率與軌道大小，觀察對軌跡與週期的影響。</p>
+      <div class="note">
+        <strong>課綱對應：</strong>地球與宇宙、行星軌道與太陽系動力學。難度：高中一年級入門，強調圖像理解與公式應用。
+      </div>
+      <div class="note" style="margin-top: 16px;">
+        <strong>使用說明：</strong>
+        <ul style="margin: 0; padding-left: 18px; color: var(--muted);">
+          <li>拖移滑桿改變軌道離心率、軌道大小與行星質量。</li>
+          <li>按「暫停」可停止動畫，按「重置參數」回到預設值。</li>
+          <li>觀察當前速度與距離變化，了解面積速率守恆。</li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+
+  <section class="quiz-card">
+    <h2>知識小測驗</h2>
+    <div class="question" data-answer="b">
+      <strong>1. 克卜勒第一定律說明什麼？</strong>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" value="a" /> 行星繞太陽運動的軌道是圓形。</label>
+        <label class="option"><input type="radio" name="q1" value="b" /> 行星繞太陽運動的軌道是橢圓，太陽位於一個焦點上。</label>
+        <label class="option"><input type="radio" name="q1" value="c" /> 行星運動的速度總是固定的。</label>
+      </div>
+      <div class="feedback" id="feedback1"></div>
+    </div>
+    <div class="question" data-answer="a">
+      <strong>2. 根據克卜勒第二定律，當行星接近近日點時：</strong>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="a" /> 速度變快，面積掃過速率不變。</label>
+        <label class="option"><input type="radio" name="q2" value="b" /> 速度變慢，面積掃過速率變大。</label>
+        <label class="option"><input type="radio" name="q2" value="c" /> 速度變慢，面積掃過速率變小。</label>
+      </div>
+      <div class="feedback" id="feedback2"></div>
+    </div>
+    <div class="question" data-answer="c">
+      <strong>3. 若半長軸 a 增大，行星的週期 T 會如何變化？</strong>
+      <div class="options">
+        <label class="option"><input type="radio" name="q3" value="a" /> 週期變小。</label>
+        <label class="option"><input type="radio" name="q3" value="b" /> 週期不變。</label>
+        <label class="option"><input type="radio" name="q3" value="c" /> 週期變大。</label>
+      </div>
+      <div class="feedback" id="feedback3"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="note"><strong>補充說明：</strong>本頁為單檔 HTML，可直接部署於 GitHub Pages。所有資源內嵌於此檔案，無需網路依賴。適合高中一年級地科選修課堂實作，並可擴充為課堂演示教材。</div>
+  </footer>
+</main>
+<script>
+  const canvas = document.getElementById('orbitCanvas');
+  const ctx = canvas.getContext('2d');
+  const toggleBtn = document.getElementById('toggleBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const eccInput = document.getElementById('eccentricity');
+  const semiInput = document.getElementById('semiMajor');
+  const massInput = document.getElementById('mass');
+  const eccVal = document.getElementById('eccVal');
+  const semiVal = document.getElementById('semiVal');
+  const massVal = document.getElementById('massVal');
+  const perihelion = document.getElementById('perihelion');
+  const aphelion = document.getElementById('aphelion');
+  const period = document.getElementById('period');
+  const speedEl = document.getElementById('speed');
+  const quizQuestions = document.querySelectorAll('.question');
+
+  let width = canvas.clientWidth;
+  let height = canvas.clientHeight;
+  const center = { x: width / 2, y: height / 2 };
+  let paused = false;
+  let lastTime = 0;
+  let phase = 0;
+
+  const state = {
+    e: parseFloat(eccInput.value),
+    a: parseFloat(semiInput.value),
+    m: parseFloat(massInput.value),
+    mu: 1,
+    theta: 0,
+    omega: 1,
+  };
+
+  function resizeCanvas() {
+    width = canvas.clientWidth;
+    height = canvas.clientHeight;
+    canvas.width = width * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+  }
+
+  function updateLabels() {
+    eccVal.textContent = state.e.toFixed(2);
+    semiVal.textContent = state.a.toFixed(2);
+    massVal.textContent = state.m.toFixed(2);
+  }
+
+  function computeOrbit() {
+    const e = state.e;
+    const a = state.a;
+    const q = a * (1 - e);
+    const Q = a * (1 + e);
+    const T = Math.sqrt(Math.pow(a, 3) / state.m);
+    const r = a * (1 - e * e) / (1 + e * Math.cos(state.theta));
+    const h = Math.sqrt(state.mu * a * (1 - e * e));
+    const v = h / r;
+    perihelion.textContent = q.toFixed(2);
+    aphelion.textContent = Q.toFixed(2);
+    period.textContent = T.toFixed(2);
+    speedEl.textContent = v.toFixed(2);
+    return { q, Q, T, r, v, h };
+  }
+
+  function drawBackground() {
+    ctx.clearRect(0, 0, width, height);
+    const starCount = 120;
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    for (let i = 0; i < starCount; i++) {
+      const x = (i * 73) % width;
+      const y = ((i * 191) % height);
+      ctx.beginPath();
+      ctx.arc(x + 5, y + 3, (i % 3) * 0.8 + 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawOrbit(grain = 1) {
+    const { e, a } = state;
+    const b = a * Math.sqrt(1 - e * e);
+    const offsetX = center.x - a * 160;
+    const offsetY = center.y;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(143,193,255,0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i <= 360; i += grain) {
+      const theta = i * Math.PI / 180;
+      const r = a * (1 - e * e) / (1 + e * Math.cos(theta));
+      const x = offsetX + r * 160 * Math.cos(theta);
+      const y = offsetY + r * 160 * Math.sin(theta);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSun() {
+    ctx.save();
+    ctx.fillStyle = '#ffc96f';
+    const sunX = center.x - state.a * 160 * state.e;
+    const sunY = center.y;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowColor = 'rgba(255, 201, 111, 0.45)';
+    ctx.shadowBlur = 24;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPlanetTrail(points) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(224,170,255,0.32)';
+    ctx.lineWidth = 10;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    points.forEach((p, index) => {
+      if (index === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawPlanet(x, y) {
+    ctx.save();
+    ctx.fillStyle = '#6bf7ff';
+    ctx.shadowColor = 'rgba(107,247,255,0.45)';
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.arc(x, y, 13, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPointLabels(r) {
+    const sunX = center.x - state.a * 160 * state.e;
+    const sunY = center.y;
+    const periAngle = 0;
+    const apheAngle = Math.PI;
+    const periX = center.x + r * 160 * Math.cos(periAngle);
+    const periY = center.y + r * 160 * Math.sin(periAngle);
+    const apheR = state.a * (1 - state.e * state.e) / (1 + state.e * Math.cos(apheAngle));
+    const apheX = center.x + apheR * 160 * Math.cos(apheAngle);
+    const apheY = center.y + apheR * 160 * Math.sin(apheAngle);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx.setLineDash([6, 8]);
+    ctx.beginPath();
+    ctx.moveTo(sunX, sunY);
+    ctx.lineTo(periX, periY);
+    ctx.moveTo(sunX, sunY);
+    ctx.lineTo(apheX, apheY);
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = '#e2f6ff';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('近日點', periX + 12, periY - 10);
+    ctx.fillText('遠日點', apheX - 72, apheY - 10);
+  }
+
+  function animate(time) {
+    const delta = (time - lastTime) * 0.001;
+    lastTime = time;
+    if (!paused) {
+      const orbit = computeOrbit();
+      const angularSpeed = orbit.h / Math.pow(orbit.r, 2);
+      state.theta += angularSpeed * delta * 0.8;
+      state.theta %= Math.PI * 2;
+      const points = [];
+      const trailSteps = 48;
+      for (let i = 0; i < trailSteps; i++) {
+        const t = state.theta - i * 0.08;
+        const r = state.a * (1 - state.e * state.e) / (1 + state.e * Math.cos(t));
+        const x = center.x + r * 160 * Math.cos(t);
+        const y = center.y + r * 160 * Math.sin(t);
+        points.push({ x, y });
+      }
+      drawBackground();
+      drawOrbit(2);
+      drawPointLabels(orbit.r);
+      drawPlanetTrail(points);
+      drawSun();
+      const currentR = state.a * (1 - state.e * state.e) / (1 + state.e * Math.cos(state.theta));
+      const px = center.x + currentR * 160 * Math.cos(state.theta);
+      const py = center.y + currentR * 160 * Math.sin(state.theta);
+      drawPlanet(px, py);
+    }
+    requestAnimationFrame(animate);
+  }
+
+  function setupEventListeners() {
+    function updateState() {
+      state.e = parseFloat(eccInput.value);
+      state.a = parseFloat(semiInput.value);
+      state.m = parseFloat(massInput.value);
+      updateLabels();
+      computeOrbit();
+    }
+    eccInput.addEventListener('input', updateState);
+    semiInput.addEventListener('input', updateState);
+    massInput.addEventListener('input', updateState);
+    toggleBtn.addEventListener('click', () => {
+      paused = !paused;
+      toggleBtn.textContent = paused ? '播放' : '暫停';
+    });
+    resetBtn.addEventListener('click', () => {
+      state.e = 0.3;
+      state.a = 1.0;
+      state.m = 1.0;
+      state.theta = 0;
+      eccInput.value = state.e;
+      semiInput.value = state.a;
+      massInput.value = state.m;
+      updateState();
+    });
+
+    quizQuestions.forEach((block, index) => {
+      const inputs = block.querySelectorAll('input');
+      const feedback = block.querySelector('.feedback');
+      inputs.forEach(input => {
+        input.addEventListener('change', () => {
+          const correct = block.dataset.answer;
+          if (input.value === correct) {
+            feedback.textContent = '答對了！你理解克卜勒定律的重點。';
+            feedback.classList.remove('incorrect');
+          } else {
+            feedback.textContent = '答錯了，請再回顧公式與定律描述。';
+            feedback.classList.add('incorrect');
+          }
+        });
+      });
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+  });
+
+  resizeCanvas();
+  updateLabels();
+  computeOrbit();
+  setupEventListeners();
+  requestAnimationFrame(animate);
+</script>
+</body>
+</html>
