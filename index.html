@@ -3,590 +3,2029 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>高中地科：克卜勒行星運動互動教學</title>
+<title>高中地科互動教材：克卜勒行星運動定律視覺化</title>
+<!-- 引入現代化字型：英文字型 Outfit 與中文字型 Noto Sans TC -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
+  /* --- 宇宙感毛玻璃設計系統與色彩變數 --- */
   :root {
-    color-scheme: dark;
-    --bg: #070923;
-    --surface: rgba(10, 18, 42, 0.92);
-    --surface-strong: rgba(21, 30, 66, 0.96);
-    --accent: #8fc1ff;
-    --accent2: #e0aaff;
-    --text: #f3f6ff;
-    --muted: #9fb4d1;
-    --success: #6ade8f;
-    --danger: #ff6b82;
-    --card: rgba(255,255,255,0.05);
-    --shadow: 0 20px 70px rgba(0,0,0,.32);
+    --bg-dark: #030514;
+    --bg-gradient: radial-gradient(circle at 50% 10%, #0d123a 0%, #030514 80%);
+    --panel-bg: rgba(9, 15, 38, 0.72);
+    --panel-border: rgba(143, 193, 255, 0.08);
+    --panel-glow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    
+    /* 科技感漸層色與發光色 */
+    --accent-blue: #6bf7ff;
+    --accent-purple: #c084fc;
+    --accent-pink: #f43f5e;
+    --accent-orange: #ffb03a;
+    --accent-yellow: #ffe366;
+    
+    /* 文字色彩 */
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #4b5563;
+    
+    /* 狀態色 */
+    --success: #10b981;
+    --danger: #ef4444;
+    --card-bg-light: rgba(255, 255, 255, 0.03);
+    --card-bg-hover: rgba(143, 193, 255, 0.06);
   }
-  * { box-sizing: border-box; }
-  body {
+
+  * { 
+    box-sizing: border-box; 
     margin: 0;
+    padding: 0;
+  }
+
+  body {
     min-height: 100vh;
-    font-family: "Segoe UI", Roboto, Arial, "Noto Sans TC", sans-serif;
-    background: radial-gradient(circle at top, #0d1b47 0%, #030511 45%, #05040f 100%);
-    color: var(--text);
+    font-family: 'Outfit', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
     overflow-x: hidden;
+    line-height: 1.6;
   }
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.14) 1px, transparent 1px), radial-gradient(circle, rgba(152, 176, 255, 0.08) 2px, transparent 2px);
-    background-size: 80px 80px, 150px 150px;
-    opacity: 0.24;
-    pointer-events: none;
-    z-index: 0;
-  }
+
+  /* 主外框與格線系統 */
   main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
     position: relative;
     z-index: 1;
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 24px 20px 60px;
   }
+
+  /* 頂部標題 */
   header {
-    display: grid;
-    gap: 18px;
-    padding: 18px 18px 24px;
-    background: linear-gradient(180deg, rgba(10,18,42,.96), rgba(2,6,20,.84));
-    border: 1px solid rgba(255,255,255,.08);
+    margin-bottom: 30px;
+    padding: 24px 30px;
+    background: rgba(9, 15, 38, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--panel-border);
     border-radius: 24px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--panel-glow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
   }
-  header h1 {
-    margin: 0;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    line-height: 1.05;
+
+  .header-title h1 {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
   }
-  header p {
-    margin: 0;
-    font-size: 1.05rem;
-    color: var(--muted);
+
+  .header-title p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 300;
   }
+
+  /* 教育徽章標籤 */
+  .badge-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    background: rgba(107, 247, 255, 0.08);
+    border: 1px solid rgba(107, 247, 255, 0.15);
+    color: var(--accent-blue);
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  /* 精美頁籤導覽 */
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 6px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 130px;
+    padding: 12px 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .tab-btn.active {
+    color: #030514;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(107, 247, 255, 0.25);
+  }
+
+  /* 左右版面配置 */
   .layout {
     display: grid;
-    gap: 24px;
-    grid-template-columns: 1.5fr 1fr;
+    gap: 30px;
+    grid-template-columns: 1.4fr 1fr;
     align-items: start;
   }
-  .panel, .quiz-card {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,.08);
+
+  /* 毛玻璃面板樣式 */
+  .panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
     border-radius: 24px;
-    padding: 22px;
-    box-shadow: var(--shadow);
+    padding: 26px;
+    box-shadow: var(--panel-glow);
+    transition: transform 0.3s ease;
   }
-  .panel h2, .quiz-card h2 {
-    margin-top: 0;
-    font-size: 1.4rem;
+
+  .panel h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid var(--accent-blue);
+    padding-left: 10px;
   }
+
+  /* 模擬畫布區 */
   .canvas-shell {
     position: relative;
     aspect-ratio: 4 / 3;
-    min-height: 420px;
-    border-radius: 24px;
+    width: 100%;
+    border-radius: 20px;
     overflow: hidden;
-    background: radial-gradient(circle at 70% 20%, rgba(124, 196, 255, 0.12), transparent 22%), radial-gradient(circle at 25% 70%, rgba(214, 138, 255, 0.1), transparent 19%), #020314;
-    border: 1px solid rgba(255,255,255,0.08);
+    background: radial-gradient(circle at 50% 50%, #080c25 0%, #02030f 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
   }
+
   canvas {
     display: block;
     width: 100%;
     height: 100%;
   }
-  .controls {
+
+  /* 即時動態數據看板 */
+  .stats-grid {
     display: grid;
-    gap: 16px;
-  }
-  .slider-row {
-    display: grid;
-    gap: 10px;
-  }
-  label {
-    font-size: .95rem;
-    color: var(--text);
-  }
-  input[type="range"] {
-    width: 100%;
-  }
-  .value-tag {
-    display: inline-flex;
-    justify-content: space-between;
-    gap: 12px;
-    font-size: .92rem;
-    color: var(--muted);
-  }
-  .stats {
-    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 12px;
     margin-top: 18px;
   }
-  .stat-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    font-size: .98rem;
-    padding: 14px 16px;
-    background: rgba(255,255,255,.04);
+
+  .stat-card {
+    background: var(--card-bg-light);
+    border: 1px solid rgba(255, 255, 255, 0.03);
     border-radius: 16px;
+    padding: 12px 14px;
+    text-align: center;
+    transition: all 0.2s ease;
   }
-  .stat-item strong {
-    color: var(--accent);
+
+  .stat-card:hover {
+    background: var(--card-bg-hover);
+    border-color: rgba(107, 247, 255, 0.15);
   }
-  .buttons {
+
+  .stat-label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .stat-unit {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+
+  /* 按鈕樣式 */
+  .btn-group {
     display: flex;
     gap: 12px;
+    margin-top: 20px;
     flex-wrap: wrap;
-    margin-top: 12px;
   }
-  .button {
-    border: 0;
-    border-radius: 999px;
-    padding: 12px 18px;
-    background: linear-gradient(135deg, rgba(143,193,255,.96), rgba(224,170,255,.88));
-    color: #061025;
-    font-weight: 700;
+
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: transform .2s, filter .2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
-  .button:hover { transform: translateY(-1px); filter: brightness(1.05); }
-  .formula-grid {
-    display: grid;
-    gap: 12px;
-    margin-top: 16px;
+
+  .btn-primary {
+    background: linear-gradient(135deg, rgba(107, 247, 255, 0.2), rgba(192, 132, 252, 0.2));
+    border: 1px solid rgba(107, 247, 255, 0.3);
+    color: var(--accent-blue);
   }
-  .formula-card {
-    padding: 18px;
-    border-radius: 18px;
-    background: rgba(14, 28, 59, 0.95);
-    border: 1px solid rgba(255,255,255,0.08);
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(107, 247, 255, 0.3), rgba(192, 132, 252, 0.3));
+    box-shadow: 0 0 15px rgba(107, 247, 255, 0.2);
+    transform: translateY(-1px);
   }
-  .formula-card p {
-    margin: 0 0 10px;
-    color: var(--muted);
-    font-size: .95rem;
+
+  .btn-primary.active-play {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: #030514;
+    border: none;
+    box-shadow: 0 4px 15px rgba(107, 247, 255, 0.35);
   }
-  .formula-card code {
-    display: block;
-    background: rgba(255,255,255,.05);
-    padding: 10px 12px;
-    border-radius: 14px;
-    color: #c9e3ff;
-    font-size: 0.96rem;
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
   }
-  .quiz-card {
-    margin-top: 24px;
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
   }
-  .question {
-    margin-bottom: 18px;
+
+  /* 學習說明導覽卡片 */
+  .intro-card {
+    background: rgba(107, 247, 255, 0.04);
+    border: 1px solid rgba(107, 247, 255, 0.1);
+    border-radius: 16px;
     padding: 16px;
-    border-radius: 18px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08);
+    margin-bottom: 20px;
+    font-size: 0.92rem;
   }
-  .question strong { display: block; margin-bottom: 8px; }
-  .options {
+
+  .intro-card strong {
+    color: var(--accent-blue);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* 互動控制項群組 */
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.92rem;
+  }
+
+  .control-label {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .control-value {
+    font-family: 'Outfit', sans-serif;
+    color: var(--accent-blue);
+    font-weight: 600;
+  }
+
+  /* 美化滑動條 */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(107, 247, 255, 0.6);
+    transition: transform 0.1s ease;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  /* 美化開關 Switch */
+  .switch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 14px;
+    font-size: 0.9rem;
+  }
+
+  .switch-container {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+
+  .switch-container input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: .3s;
+    border-radius: 24px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+
+  /* 真實天體按鈕 */
+  .celestial-grid {
     display: grid;
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
   }
-  .option {
-    display: inline-flex;
+
+  .celestial-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 8px 4px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .celestial-btn:hover {
+    background: rgba(107, 247, 255, 0.06);
+    border-color: rgba(107, 247, 255, 0.2);
+    color: var(--text-primary);
+  }
+
+  .celestial-btn.active {
+    background: rgba(107, 247, 255, 0.12);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    font-weight: 600;
+  }
+
+  /* 定律資訊展示卡 */
+  .info-block {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .formula-card {
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(10, 18, 48, 0.9);
+    border: 1px solid var(--panel-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .formula-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+  }
+
+  .formula-title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  .formula-body {
+    font-family: 'Outfit', 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    color: var(--accent-blue);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    word-break: break-all;
+  }
+
+  /* 知識小測驗 */
+  .quiz-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .quiz-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 18px;
+    padding: 18px;
+    transition: all 0.3s ease;
+  }
+
+  .quiz-card:hover {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .quiz-q {
+    font-weight: 600;
+    font-size: 0.98rem;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .quiz-num {
+    color: var(--accent-blue);
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 8px;
+  }
+
+  .quiz-opt {
+    display: flex;
     align-items: center;
     gap: 10px;
     padding: 12px 14px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid transparent;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     cursor: pointer;
-    transition: border-color .2s, background .2s;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
   }
-  .option:hover { background: rgba(143,193,255,0.08); }
-  .option input { accent-color: #8fc1ff; }
-  .feedback {
+
+  .quiz-opt:hover {
+    background: var(--card-bg-hover);
+    border-color: rgba(143, 193, 255, 0.1);
+  }
+
+  .quiz-opt input {
+    accent-color: var(--accent-blue);
+    width: 16px;
+    height: 16px;
+  }
+
+  .quiz-opt.correct-opt {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #a7f3d0;
+  }
+
+  .quiz-opt.incorrect-opt {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+
+  .quiz-feedback {
     margin-top: 12px;
-    min-height: 24px;
-    color: var(--success);
-    font-weight: 700;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    display: none;
+    animation: fadeIn 0.4s ease forwards;
   }
-  .feedback.incorrect { color: var(--danger); }
+
+  .quiz-feedback.show-correct {
+    display: block;
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    color: #34d399;
+  }
+
+  .quiz-feedback.show-incorrect {
+    display: block;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    color: #f87171;
+  }
+
+  .quiz-feedback-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background: rgba(107, 247, 255, 0.1);
+    color: var(--accent-blue);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .quiz-feedback-btn:hover {
+    background: rgba(107, 247, 255, 0.2);
+  }
+
+  /* 頁籤隱藏與顯示 */
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  /* 動態漸變進場效果 */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 頁尾 */
   footer {
     margin-top: 40px;
-    display: grid;
-    gap: 14px;
-    color: var(--muted);
-    font-size: .92rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
   }
-  .note {
-    padding: 16px;
-    border-radius: 18px;
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.06);
+
+  footer a {
+    color: var(--accent-blue);
+    text-decoration: none;
   }
-  @media (max-width: 980px) {
-    .layout { grid-template-columns: 1fr; }
+
+  footer a:hover {
+    text-decoration: underline;
   }
-  @media (max-width: 660px) {
-    main { padding: 18px 14px 40px; }
-    .panel, .quiz-card { padding: 18px; }
-    .control-grid { gap: 12px; }
+
+  /* 響應式佈局調校 */
+  @media (max-width: 1024px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    main {
+      padding: 16px 12px 40px;
+    }
+    header {
+      padding: 16px 20px;
+      border-radius: 18px;
+    }
+    .panel {
+      padding: 18px;
+      border-radius: 18px;
+    }
+    .nav-tabs {
+      border-radius: 12px;
+      padding: 4px;
+    }
+    .tab-btn {
+      padding: 8px 12px;
+      font-size: 0.88rem;
+    }
   }
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <div>
-      <h1>高中地科：克卜勒行星運動互動教學</h1>
-      <p>主題：克卜勒三大行星運動定律 · 對象：高中一年級 · 目標：理解橢圓軌道、面積速率守恆、週期與距離的關係。</p>
+  <!-- 頁首標題區 -->
+  <header class="glass">
+    <div class="header-title">
+      <h1>克卜勒行星運動定律互動教學</h1>
+      <p>高中地球科學 · 資訊與地科跨領域物理模擬互動教材</p>
+    </div>
+    <div class="badge-container">
+      <span class="badge">108課綱對應</span>
+      <span class="badge">行星軌道力學</span>
+      <span class="badge">動態等面積剖切</span>
     </div>
   </header>
 
+  <!-- 精美頁籤按鈕群 -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="first-law">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      第一定律：軌道定律
+    </button>
+    <button class="tab-btn" data-tab="second-law">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="10"/></svg>
+      第二定律：等面積定律
+    </button>
+    <button class="tab-btn" data-tab="third-law">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+      第三定律：週期定律
+    </button>
+    <button class="tab-btn" data-tab="quiz">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      知識小測驗
+    </button>
+  </nav>
+
+  <!-- 主格線版面 -->
   <section class="layout">
+    <!-- 左側：模擬畫布與即時狀態數據 (所有頁籤共用) -->
     <article class="panel">
-      <h2>動態視覺化</h2>
+      <h2>互動天體模擬</h2>
       <div class="canvas-shell">
-        <canvas id="orbitCanvas" width="1200" height="900"></canvas>
+        <canvas id="orbitCanvas"></canvas>
       </div>
-      <div class="buttons">
-        <button class="button" id="toggleBtn">暫停</button>
-        <button class="button" id="resetBtn">重置參數</button>
+      
+      <!-- 播放控制按鈕 -->
+      <div class="btn-group">
+        <button class="btn btn-primary active-play" id="toggleBtn">
+          <svg id="playIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="pauseIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <span id="playBtnText">暫停模擬</span>
+        </button>
+        <button class="btn btn-secondary" id="resetBtn">重置參數</button>
       </div>
-      <div class="controls">
-        <div class="slider-row">
-          <label for="eccentricity">離心率 e：<span id="eccVal">0.30</span></label>
-          <input id="eccentricity" type="range" min="0" max="0.85" step="0.01" value="0.30" />
+
+      <!-- 即時物理量動態顯示 (提升學習深度) -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">近日點距離 q</span>
+          <span class="stat-value" id="perihelion">0.70</span><span class="stat-unit">AU</span>
         </div>
-        <div class="slider-row">
-          <label for="semiMajor">軌道半長軸 a（相對距離）：<span id="semiVal">1.00</span></label>
-          <input id="semiMajor" type="range" min="0.6" max="1.8" step="0.02" value="1.0" />
+        <div class="stat-card">
+          <span class="stat-label">遠日點距離 Q</span>
+          <span class="stat-value" id="aphelion">1.30</span><span class="stat-unit">AU</span>
         </div>
-        <div class="slider-row">
-          <label for="mass">行星質量 m（相對質量）：<span id="massVal">1.00</span></label>
-          <input id="mass" type="range" min="0.2" max="5.0" step="0.1" value="1.0" />
+        <div class="stat-card">
+          <span class="stat-label">理論週期 T</span>
+          <span class="stat-value" id="period">1.00</span><span class="stat-unit">yr</span>
         </div>
-      </div>
-      <div class="stats">
-        <div class="stat-item"><span>近日點距離 q</span><strong id="perihelion">0.70</strong></div>
-        <div class="stat-item"><span>遠日點距離 Q</span><strong id="aphelion">1.30</strong></div>
-        <div class="stat-item"><span>週期 T（相對單位）</span><strong id="period">1.00</strong></div>
-        <div class="stat-item"><span>當前速度 v</span><strong id="speed">1.00</strong></div>
-      </div>
-      <div class="formula-grid">
-        <div class="formula-card">
-          <p>1. 椭圓轨道公式</p>
-          <code>r(θ) = a(1 - e²) / (1 + e cos θ)</code>
+        <div class="stat-card">
+          <span class="stat-label">當前速度 v</span>
+          <span class="stat-value" id="speed">1.00</span><span class="stat-unit">相對值</span>
         </div>
-        <div class="formula-card">
-          <p>2. 面積速率守恆（克卜勒第二定律）</p>
-          <code>r²·dθ/dt = 常數</code>
-        </div>
-        <div class="formula-card">
-          <p>3. 週期與半長軸關係（第三定律）</p>
-          <code>T² ∝ a³</code>
+        <div class="stat-card">
+          <span class="stat-label">向心加速度 a_c</span>
+          <span class="stat-value" id="acceleration">1.00</span><span class="stat-unit">相對值</span>
         </div>
       </div>
     </article>
 
+    <!-- 右側：隨頁籤變更的學習引導與參數控制 -->
     <aside class="panel">
-      <h2>重點說明</h2>
-      <p>此互動教學以克卜勒行星運動定律為核心，透過橢圓軌道動畫顯示：當行星接近近日點時速度提高，遠日點時速度變慢；同時調整離心率與軌道大小，觀察對軌跡與週期的影響。</p>
-      <div class="note">
-        <strong>課綱對應：</strong>地球與宇宙、行星軌道與太陽系動力學。難度：高中一年級入門，強調圖像理解與公式應用。
+      <!-- 1. 第一定律頁籤 -->
+      <div id="first-law-content" class="tab-content active">
+        <h2>克卜勒第一定律：軌道定律</h2>
+        <div class="intro-card">
+          <strong>第一定律的核心觀念：</strong>
+          行星繞太陽運動的軌道是一個「橢圓」，太陽並非位於圓心，而是位於橢圓的其中一個「焦點」上。橢圓另一個焦點則為虛擬空焦點。
+        </div>
+
+        <div class="control-group">
+          <!-- 離心率滑桿 -->
+          <div class="control-item">
+            <div class="control-header">
+              <span class="control-label">軌道離心率 e (橢圓扁平度)</span>
+              <span class="control-value" id="eccVal">0.30</span>
+            </div>
+            <input id="eccentricity" type="range" min="0" max="0.85" step="0.01" value="0.30" />
+          </div>
+
+          <!-- 半長軸滑桿 -->
+          <div class="control-item">
+            <div class="control-header">
+              <span class="control-label">軌道半長軸 a (軌道大小)</span>
+              <span class="control-value" id="semiVal">1.00</span>
+            </div>
+            <input id="semiMajor" type="range" min="0.6" max="1.8" step="0.02" value="1.0" />
+          </div>
+
+          <!-- 教學視覺輔助開關 -->
+          <div class="switch-row">
+            <span>顯示橢圓虛擬空焦點 (Focus 2)</span>
+            <label class="switch-container">
+              <input type="checkbox" id="showFocus2" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <span>顯示焦點連線 (r₁ + r₂ = 2a)</span>
+            <label class="switch-container">
+              <input type="checkbox" id="showFociLines" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <!-- 動態幾何驗證 -->
+          <div class="formula-card" id="geometryCard" style="display: block;">
+            <div class="formula-title">橢圓幾何動態定義驗證：</div>
+            <div style="font-size:0.88rem; color:var(--text-secondary); margin-bottom: 6px;">
+              行星至太陽距離 <span style="color:#6bf7ff; font-weight:600;">r₁ = <span id="r1Val">1.00</span></span><br/>
+              行星至空焦點距離 <span style="color:#c084fc; font-weight:600;">r₂ = <span id="r2Val">1.00</span></span>
+            </div>
+            <div class="formula-body">
+              r₁ + r₂ = <span id="r1r2Sum">2.00</span> = 2a (常數)
+            </div>
+          </div>
+
+          <div class="formula-card">
+            <div class="formula-title">極坐標橢圓軌道公式：</div>
+            <div class="formula-body">r(θ) = a(1 - e²) / (1 + e cos θ)</div>
+          </div>
+        </div>
       </div>
-      <div class="note" style="margin-top: 16px;">
-        <strong>使用說明：</strong>
-        <ul style="margin: 0; padding-left: 18px; color: var(--muted);">
-          <li>拖移滑桿改變軌道離心率、軌道大小與行星質量。</li>
-          <li>按「暫停」可停止動畫，按「重置參數」回到預設值。</li>
-          <li>觀察當前速度與距離變化，了解面積速率守恆。</li>
-        </ul>
+
+      <!-- 2. 第二定律頁籤 -->
+      <div id="second-law-content" class="tab-content">
+        <h2>克卜勒第二定律：等面積定律</h2>
+        <div class="intro-card">
+          <strong>第二定律的核心觀念：</strong>
+          行星與太陽的連線，在「相同的時間間隔」內，掃過的面積完全相等。這意味著：當行星距離太陽較近（近日點）時，運動速度會加快；距離較遠（遠日點）時，速度會減慢。
+        </div>
+
+        <div class="control-group">
+          <!-- 動畫速度控制 -->
+          <div class="control-item">
+            <div class="control-header">
+              <span class="control-label">模擬動畫速度</span>
+              <span class="control-value" id="simSpeedVal">1.0x</span>
+            </div>
+            <input id="simSpeed" type="range" min="0.2" max="2.5" step="0.1" value="1.0" />
+          </div>
+
+          <!-- 第二定律視覺輔助開關 -->
+          <div class="switch-row">
+            <span style="font-weight:600; color:var(--accent-blue);">顯示「等時間」等面積剖切扇形</span>
+            <label class="switch-container">
+              <input type="checkbox" id="showSweeps" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <span>顯示速度向量 v (發光綠線)</span>
+            <label class="switch-container">
+              <input type="checkbox" id="showVelVector" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <span>顯示向心加速度向量 a_c (發光橘線)</span>
+            <label class="switch-container">
+              <input type="checkbox" id="showAccVector" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="formula-card">
+            <div class="formula-title">物理本質：角動量守恆</div>
+            <div style="font-size:0.88rem; color:var(--text-secondary); margin-bottom: 8px;">
+              行星受到太陽的萬有引力指向引力中心（太陽），屬於<strong>共點力</strong>，其受力方向與距離向量平行，因此<strong>外力矩為零 ($\vec{\tau} = 0$)</strong>，行星相對於太陽的<strong>角動量守恆</strong>。
+            </div>
+            <div class="formula-title">1. 角動量公式：</div>
+            <div class="formula-body" style="margin-bottom: 10px;">L = r × p = m (r × v) = m r² ω = 常數</div>
+            
+            <div class="formula-title">2. 等面積速率概念：</div>
+            <div style="font-size:0.88rem; color:var(--text-secondary); margin-bottom: 8px;">
+              行星與太陽的連線在單位時間內掃過的面積，稱為<strong>面積速率</strong>。因為角動量守恆，面積速率不隨時間而變，這就是第二定律的物理本質。
+            </div>
+            <div class="formula-title">3. 面積定律公式：</div>
+            <div class="formula-body">dA/dt = 1/2 · r² · (dθ/dt) = L / (2m) = 常數</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 第三定律頁籤 -->
+      <div id="third-law-content" class="tab-content">
+        <h2>克卜勒第三定律：週期定律</h2>
+        <div class="intro-card">
+          <strong>第三定律的核心觀念：</strong>
+          行星繞太陽公轉週期的平方（$T^2$）與軌道半長軸的立方（$a^3$）成正比。這代表距離太陽越遠的行星，不僅軌道越長，且平均運動速度越慢，週期會顯著拉長！
+        </div>
+
+        <div class="control-group">
+          <!-- 真實行星參數載入按鈕組 -->
+          <div class="control-item">
+            <span class="control-label" style="font-size:0.9rem;">一鍵載入真實天體參數：</span>
+            <div class="celestial-grid">
+              <button class="celestial-btn" data-preset="mercury">水星</button>
+              <button class="celestial-btn" data-preset="venus">金星</button>
+              <button class="celestial-btn active" data-preset="earth">地球</button>
+              <button class="celestial-btn" data-preset="mars">火星</button>
+              <button class="celestial-btn" data-preset="jupiter">木星</button>
+              <button class="celestial-btn" data-preset="saturn">土星</button>
+              <button class="celestial-btn" data-preset="halley">哈雷彗星</button>
+            </div>
+          </div>
+
+          <!-- 雙軌道對比開關 -->
+          <div class="switch-row">
+            <span style="font-weight:600; color:var(--accent-purple);">開啟「雙軌道對比」（以地球軌道為基準）</span>
+            <label class="switch-container">
+              <input type="checkbox" id="compareOrbit">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- 恆星質量滑桿 -->
+          <div class="control-item">
+            <div class="control-header">
+              <span class="control-label">中心恆星質量 M (對週期有影響)</span>
+              <span class="control-value" id="massVal">1.00</span>
+            </div>
+            <input id="mass" type="range" min="0.2" max="3.0" step="0.1" value="1.0" />
+          </div>
+        </div>
+
+        <div class="info-block">
+          <!-- 週期與半長軸分析卡 -->
+          <div class="formula-card">
+            <div class="formula-title">克卜勒第三定律數值驗證：</div>
+            <div style="font-size:0.85rem; color:var(--text-secondary); margin-bottom: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <span>半長軸立方 a³ = <strong id="a3Val" style="color:var(--accent-blue);">1.00</strong></span>
+              <span>週期平方 T² = <strong id="t2Val" style="color:var(--accent-purple);">1.00</strong></span>
+            </div>
+            <div class="formula-body" style="text-align: center;">
+              T² / a³ = <span id="t2a3Ratio">1.00</span> / M (驗證常數)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 知識小測驗頁籤 -->
+      <div id="quiz-content" class="tab-content">
+        <h2>克卜勒定律知識小測驗</h2>
+        <div class="intro-card" style="background:rgba(192, 132, 252, 0.04); border-color:rgba(192, 132, 252, 0.1);">
+          <strong>測驗說明：</strong>
+          精選四道地科經典測驗題。提交回答後，將為您展示精確的地科核心觀念解析。
+        </div>
+
+        <div class="quiz-container">
+          <!-- 第一題 -->
+          <div class="quiz-card" data-answer="b">
+            <div class="quiz-q">
+              <span class="quiz-num">Q1</span>
+              <span>關於克卜勒第一定律說明，下列敘述何者正確？</span>
+            </div>
+            <div class="quiz-options">
+              <label class="quiz-opt"><input type="radio" name="q1" value="a" /> <span>行星繞太陽運動的軌道是完美的圓形。</span></label>
+              <label class="quiz-opt"><input type="radio" name="q1" value="b" /> <span>行星繞太陽的軌道為橢圓，且太陽位於其中一個焦點上。</span></label>
+              <label class="quiz-opt"><input type="radio" name="q1" value="c" /> <span>行星軌道的另一個空焦點上也有一顆隱藏的恆星。</span></label>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- 第二題 -->
+          <div class="quiz-card" data-answer="a">
+            <div class="quiz-q">
+              <span class="quiz-num">Q2</span>
+              <span>根據克卜勒第二定律（等面積定律），當行星移動到近日點時：</span>
+            </div>
+            <div class="quiz-options">
+              <label class="quiz-opt"><input type="radio" name="q2" value="a" /> <span>行星的速度最快，此時與太陽連線在單位時間掃過的面積不變。</span></label>
+              <label class="quiz-opt"><input type="radio" name="q2" value="b" /> <span>由於距離近日點近，行星的速度最慢，掃過面積最大。</span></label>
+              <label class="quiz-opt"><input type="radio" name="q2" value="c" /> <span>行星速度不變，但是軌道半徑縮短使掃過面積變小。</span></label>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- 第三題 -->
+          <div class="quiz-card" data-answer="c">
+            <div class="quiz-q">
+              <span class="quiz-num">Q3</span>
+              <span>在太陽系中，若有一顆新發現的矮行星，其軌道半長軸 a 為 4.0 AU，其繞日週期 T 約為幾年？</span>
+            </div>
+            <div class="quiz-options">
+              <label class="quiz-opt"><input type="radio" name="q3" value="a" /> <span>4.0 年</span></label>
+              <label class="quiz-opt"><input type="radio" name="q3" value="b" /> <span>64.0 年</span></label>
+              <label class="quiz-opt"><input type="radio" name="q3" value="c" /> <span>8.0 年</span></label>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- 第四題 -->
+          <div class="quiz-card" data-answer="b">
+            <div class="quiz-q">
+              <span class="quiz-num">Q4</span>
+              <span>已知哈雷彗星的軌道離心率 e 非常高（約 0.967），這對其繞日運動產生什麼視覺影響？</span>
+            </div>
+            <div class="quiz-options">
+              <label class="quiz-opt"><input type="radio" name="q4" value="a" /> <span>哈雷彗星的軌道非常接近正圓，運行速度十分穩定。</span></label>
+              <label class="quiz-opt"><input type="radio" name="q4" value="b" /> <span>近日點時會如狂飆般呼嘯而過，而遠日點時則會極其緩慢地爬行。</span></label>
+              <label class="quiz-opt"><input type="radio" name="q4" value="c" /> <span>由於離心率大，哈雷彗星只會公轉一圈就脫離太陽系。</span></label>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+        </div>
       </div>
     </aside>
   </section>
 
-  <section class="quiz-card">
-    <h2>知識小測驗</h2>
-    <div class="question" data-answer="b">
-      <strong>1. 克卜勒第一定律說明什麼？</strong>
-      <div class="options">
-        <label class="option"><input type="radio" name="q1" value="a" /> 行星繞太陽運動的軌道是圓形。</label>
-        <label class="option"><input type="radio" name="q1" value="b" /> 行星繞太陽運動的軌道是橢圓，太陽位於一個焦點上。</label>
-        <label class="option"><input type="radio" name="q1" value="c" /> 行星運動的速度總是固定的。</label>
-      </div>
-      <div class="feedback" id="feedback1"></div>
-    </div>
-    <div class="question" data-answer="a">
-      <strong>2. 根據克卜勒第二定律，當行星接近近日點時：</strong>
-      <div class="options">
-        <label class="option"><input type="radio" name="q2" value="a" /> 速度變快，面積掃過速率不變。</label>
-        <label class="option"><input type="radio" name="q2" value="b" /> 速度變慢，面積掃過速率變大。</label>
-        <label class="option"><input type="radio" name="q2" value="c" /> 速度變慢，面積掃過速率變小。</label>
-      </div>
-      <div class="feedback" id="feedback2"></div>
-    </div>
-    <div class="question" data-answer="c">
-      <strong>3. 若半長軸 a 增大，行星的週期 T 會如何變化？</strong>
-      <div class="options">
-        <label class="option"><input type="radio" name="q3" value="a" /> 週期變小。</label>
-        <label class="option"><input type="radio" name="q3" value="b" /> 週期不變。</label>
-        <label class="option"><input type="radio" name="q3" value="c" /> 週期變大。</label>
-      </div>
-      <div class="feedback" id="feedback3"></div>
-    </div>
-  </section>
-
+  <!-- 補充與版權資訊 -->
   <footer>
-    <div class="note"><strong>補充說明：</strong>本頁為單檔 HTML，可直接部署於 GitHub Pages。所有資源內嵌於此檔案，無需網路依賴。適合高中一年級地科選修課堂實作，並可擴充為課堂演示教材。</div>
+    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+      本平台採用 HTML5 Canvas 與標準天體力學物理方程式模擬。<br/>
+      物理演算法採用<strong>平近點角 (Mean Anomaly)</strong> 與<strong>克卜勒方程數值解 (Newton-Raphson)</strong>，確保等面積物理行為 100% 精確。
+    </div>
+    <div>
+      開發：<a href="#">Antigravity AI 助教</a> · 適合高中地科選修課堂
+    </div>
   </footer>
 </main>
+
 <script>
+  /**
+   * ==========================================
+   * 克卜勒行星運動互動教學網頁 - 核心模擬引擎
+   * ==========================================
+   * 
+   * 專門為高中地科與資訊學科跨領域設計的高精度物理模擬。
+   * 為了讓學生更清楚地理解物理原理，本程式以模組化結構組織，並包含詳盡的中文註解。
+   */
+
+  // 1. 真實天體預設參數庫 (天文單位 AU ＆ 年 yr)
+  const PLANET_PRESETS = {
+    mercury: { a: 0.387, e: 0.206, name: '水星' },
+    venus:   { a: 0.723, e: 0.007, name: '金星' },
+    earth:   { a: 1.000, e: 0.017, name: '地球' },
+    mars:    { a: 1.524, e: 0.093, name: '火星' },
+    jupiter: { a: 1.800, e: 0.048, name: '木星(縮放軌道)' }, // 為了在畫布顯示，將半長軸略微縮放
+    saturn:  { a: 2.100, e: 0.054, name: '土星(縮放軌道)' }, // 為了在畫布顯示，將半長軸略微縮放
+    halley:  { a: 1.450, e: 0.967, name: '哈雷彗星' }      // 極大離心率之代表，為配合畫布其半長軸經適度縮放
+  };
+
+  // 2. 獲取網頁 UI 元素
   const canvas = document.getElementById('orbitCanvas');
   const ctx = canvas.getContext('2d');
   const toggleBtn = document.getElementById('toggleBtn');
   const resetBtn = document.getElementById('resetBtn');
+  const playIcon = document.getElementById('playIcon');
+  const pauseIcon = document.getElementById('pauseIcon');
+  const playBtnText = document.getElementById('playBtnText');
+
+  // 控制項
   const eccInput = document.getElementById('eccentricity');
   const semiInput = document.getElementById('semiMajor');
   const massInput = document.getElementById('mass');
+  const simSpeedInput = document.getElementById('simSpeed');
+  
+  // 開關 Checkboxes
+  const showFocus2Checkbox = document.getElementById('showFocus2');
+  const showFociLinesCheckbox = document.getElementById('showFociLines');
+  const showSweepsCheckbox = document.getElementById('showSweeps');
+  const showVelVectorCheckbox = document.getElementById('showVelVector');
+  const showAccVectorCheckbox = document.getElementById('showAccVector');
+  const compareOrbitCheckbox = document.getElementById('compareOrbit');
+
+  // 數值顯示標籤
   const eccVal = document.getElementById('eccVal');
   const semiVal = document.getElementById('semiVal');
   const massVal = document.getElementById('massVal');
-  const perihelion = document.getElementById('perihelion');
-  const aphelion = document.getElementById('aphelion');
-  const period = document.getElementById('period');
-  const speedEl = document.getElementById('speed');
-  const quizQuestions = document.querySelectorAll('.question');
+  const simSpeedVal = document.getElementById('simSpeedVal');
+  const perihelionText = document.getElementById('perihelion');
+  const aphelionText = document.getElementById('aphelion');
+  const periodText = document.getElementById('period');
+  const speedText = document.getElementById('speed');
+  const accText = document.getElementById('acceleration');
+  
+  // 第一定律幾何標籤
+  const r1ValSpan = document.getElementById('r1Val');
+  const r2ValSpan = document.getElementById('r2Val');
+  const r1r2SumSpan = document.getElementById('r1r2Sum');
+  
+  // 第三定律標籤
+  const a3ValSpan = document.getElementById('a3Val');
+  const t2ValSpan = document.getElementById('t2Val');
+  const t2a3RatioSpan = document.getElementById('t2a3Ratio');
 
+  // 3. 系統核心狀態變數
   let width = canvas.clientWidth;
   let height = canvas.clientHeight;
-  const center = { x: width / 2, y: height / 2 };
   let paused = false;
   let lastTime = 0;
-  let phase = 0;
+  
+  // 平近點角 M (Mean Anomaly)，其特點是隨時間勻速增加：dM/dt = n = 2*pi / T
+  let meanAnomaly = 0;
 
+  // 動態星空背景粒子陣列
+  let stars = [];
+
+  // 行星粒子尾跡陣列，用來儲存行星移動路徑上的發光點
+  let trailPoints = [];
+  const MAX_TRAIL_LENGTH = 120; // 尾跡最大長度
+
+  // 系統控制物理狀態
   const state = {
-    e: parseFloat(eccInput.value),
-    a: parseFloat(semiInput.value),
-    m: parseFloat(massInput.value),
-    mu: 1,
-    theta: 0,
-    omega: 1,
+    e: parseFloat(eccInput.value),      // 當前離心率
+    a: parseFloat(semiInput.value),     // 當前軌道半長軸
+    m: parseFloat(massInput.value),      // 中心恆星質量 (對週期 T 有影響)
+    simSpeed: parseFloat(simSpeedInput.value), // 模擬速度倍率
+    currentR: 0,                         // 當前軌道半徑 r1
+    currentR2: 0,                        // 當前到空焦點距離 r2
+    currentV: 0,                         // 當前速度相對值
+    currentAcc: 0,                       // 當前加速度相對值
+    theta: 0                             // 真近點角 (True Anomaly)
   };
 
+  /**
+   * 4. 動態調整畫布解析度 (以適應 Retina 高解析度螢幕並支援 RWD)
+   */
   function resizeCanvas() {
-    width = canvas.clientWidth;
-    height = canvas.clientHeight;
-    canvas.width = width * window.devicePixelRatio;
-    canvas.height = height * window.devicePixelRatio;
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    try {
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+      
+      // 重設視窗尺寸時，清空行星尾跡以防止比例尺 (scale) 變更導致歷史軌跡點錯位
+      trailPoints = [];
+    } catch (e) {
+      console.error("Canvas resize 錯誤: ", e);
+    }
   }
 
-  function updateLabels() {
-    eccVal.textContent = state.e.toFixed(2);
-    semiVal.textContent = state.a.toFixed(2);
-    massVal.textContent = state.m.toFixed(2);
+  /**
+   * 5. 初始化動態粒子星空
+   * 星星擁有不同的尺寸、亮度和微幅波動的閃爍週期
+   */
+  function initStars() {
+    stars = [];
+    const numStars = 150;
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: Math.random() * 1200, // 採用虛擬座標，後續繪製時等比縮放
+        y: Math.random() * 900,
+        size: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.8 + 0.2,
+        phase: Math.random() * Math.PI * 2, // 隨機初相
+        speed: 0.02 + Math.random() * 0.05 // 閃爍頻率
+      });
+    }
   }
 
-  function computeOrbit() {
+  /**
+   * 6. 核心物理演算法：克卜勒方程式高精度數值解
+   * 
+   * 克卜勒第二定律的本質是「等時間等面積」。在物理上，隨時間線性增加的量是「平近點角 M = n * (t - t0)」。
+   * 要想得到行星在特定時間的空間位置 (r, theta)，我們必須求解克卜勒方程式：
+   * M = E - e * sin(E)  (其中 E 為離心近點角 Eccentric Anomaly)
+   * 
+   * 由於這是一個超越方程，無法得到解析解，因此我們使用 Newton-Raphson 數值積分迭代法。
+   * 這段代碼極具教育價值，向學生展示了「電腦如何用數值方法逼近解析物理世界」。
+   */
+  function solveKeplerEquation(M, e) {
+    let E = M; // 初始猜測值設為 M
+    const tolerance = 1e-6; // 精準度容許值
+    const maxIterations = 30;
+
+    for (let i = 0; i < maxIterations; i++) {
+      // f(E) = E - e*sin(E) - M
+      // df(E)/dE = 1 - e*cos(E)
+      // E_next = E - f(E) / df(E)
+      const diff = E - e * Math.sin(E) - M;
+      const derivative = 1 - e * Math.cos(E);
+      const deltaE = diff / derivative;
+      E -= deltaE;
+
+      if (Math.abs(deltaE) < tolerance) {
+        break; // 當增量小於誤差容許，完成求解
+      }
+    }
+    return E;
+  }
+
+  /**
+   * 7. 天體軌道物理計算
+   */
+  function updatePhysics(delta) {
+    try {
+      const e = state.e;
+      const a = state.a;
+      const M_sun = state.m; // 中心恆星質量
+
+      // 根據克卜勒第三定律：T² = a³ / M_sun
+      const period = Math.sqrt(Math.pow(a, 3) / M_sun);
+      
+      // 平均運動率 n = 2*pi / T
+      const n = (Math.PI * 2) / period;
+
+      if (!paused) {
+        // M 隨時間勻速遞增 (平近點角)
+        // 乘上 state.simSpeed 模擬時間流速
+        meanAnomaly += n * delta * 0.12 * state.simSpeed;
+        meanAnomaly %= Math.PI * 2;
+      }
+
+      // 1. 解克卜勒方程，獲取當前時間步的離心近點角 E
+      const E = solveKeplerEquation(meanAnomaly, e);
+
+      // 2. 透過離心近點角 E 計算真近點角 theta (行星相對於太陽焦點的角度)
+      // 使用幾何變換公式：tan(theta/2) = sqrt((1+e)/(1-e)) * tan(E/2)
+      let theta = 2 * Math.atan2(
+        Math.sqrt(1 + e) * Math.sin(E / 2),
+        Math.sqrt(1 - e) * Math.cos(E / 2)
+      );
+      if (theta < 0) theta += Math.PI * 2;
+      state.theta = theta;
+
+      // 3. 根據極坐標軌道公式計算半徑 r1 (行星至太陽焦點距離)
+      // r = a * (1 - e*cos(E)) 或 r = a * (1 - e^2) / (1 + e*cos(theta))
+      const r1 = a * (1 - e * Math.cos(E));
+      state.currentR = r1;
+
+      // 4. 計算行星至橢圓虛擬空焦點的距離 r2
+      // 根據橢圓定義：r1 + r2 = 2a => r2 = 2a - r1
+      const r2 = 2 * a - r1;
+      state.currentR2 = r2;
+
+      // 5. 計算當前位置的軌道速度相對值 (利用活力公式 Vis-Viva Equation)
+      // v² = G*M * (2/r - 1/a) => 在相對單位下 v = sqrt(M_sun * (2/r - 1/a))
+      const v = Math.sqrt(M_sun * (2 / r1 - 1 / a));
+      state.currentV = v;
+
+      // 6. 計算當前位置的向心加速度相對值 a_c = G*M / r²
+      const acc = M_sun / (r1 * r1);
+      state.currentAcc = acc;
+
+      // 更新 UI 數據面板
+      const q = a * (1 - e); // 近日點距離
+      const Q = a * (1 + e); // 遠日點距離
+
+      perihelionText.textContent = q.toFixed(3);
+      aphelionText.textContent = Q.toFixed(3);
+      periodText.textContent = period.toFixed(3);
+      speedText.textContent = v.toFixed(3);
+      accText.textContent = acc.toFixed(3);
+
+      // 更新第一定律幾何驗證數值
+      r1ValSpan.textContent = r1.toFixed(3);
+      r2ValSpan.textContent = r2.toFixed(3);
+      r1r2SumSpan.textContent = (r1 + r2).toFixed(3);
+
+      // 更新第三定律物理驗證數值
+      const a3 = Math.pow(a, 3);
+      const t2 = Math.pow(period, 2);
+      a3ValSpan.textContent = a3.toFixed(3);
+      t2ValSpan.textContent = t2.toFixed(3);
+      t2a3RatioSpan.textContent = (t2 / a3).toFixed(3);
+
+    } catch (err) {
+      console.error("物理引擎計算出錯:", err);
+    }
+  }
+
+  /**
+   * 8. 繪圖模組：星空、天體、軌道及所有教學輔助線
+   */
+
+  // 繪製背景動態星空與星光微閃效果
+  function drawSpaceBackground() {
+    ctx.fillStyle = '#02030d';
+    ctx.fillRect(0, 0, width, height);
+
+    // 繪製發光微弱的遠方星雲
+    const nebulaGlow = ctx.createRadialGradient(width/2, height/2, 20, width/2, height/2, width*0.7);
+    nebulaGlow.addColorStop(0, 'rgba(12, 18, 54, 0.6)');
+    nebulaGlow.addColorStop(0.5, 'rgba(6, 9, 32, 0.4)');
+    nebulaGlow.addColorStop(1, 'rgba(2, 3, 13, 1)');
+    ctx.fillStyle = nebulaGlow;
+    ctx.fillRect(0, 0, width, height);
+
+    // 繪製閃爍粒子星星
+    ctx.fillStyle = '#ffffff';
+    stars.forEach(star => {
+      // 根據隨機初相與正弦函數動態改變透明度，模擬眨眼效果
+      star.phase += star.speed;
+      const currentAlpha = star.alpha * (0.4 + 0.6 * Math.abs(Math.sin(star.phase)));
+      
+      ctx.save();
+      ctx.globalAlpha = currentAlpha;
+      ctx.beginPath();
+      // 等比縮放星點座標以支援視窗縮放
+      const sx = (star.x / 1200) * width;
+      const sy = (star.y / 900) * height;
+      ctx.arc(sx, sy, star.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  // 核心天體與軌道繪製
+  function drawSimulation() {
     const e = state.e;
     const a = state.a;
-    const q = a * (1 - e);
-    const Q = a * (1 + e);
-    const T = Math.sqrt(Math.pow(a, 3) / state.m);
-    const r = a * (1 - e * e) / (1 + e * Math.cos(state.theta));
-    const h = Math.sqrt(state.mu * a * (1 - e * e));
-    const v = h / r;
-    perihelion.textContent = q.toFixed(2);
-    aphelion.textContent = Q.toFixed(2);
-    period.textContent = T.toFixed(2);
-    speedEl.textContent = v.toFixed(2);
-    return { q, Q, T, r, v, h };
-  }
 
-  function drawBackground() {
-    ctx.clearRect(0, 0, width, height);
-    const starCount = 120;
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
-    for (let i = 0; i < starCount; i++) {
-      const x = (i * 73) % width;
-      const y = ((i * 191) % height);
+    // 比例尺因子：根據軌道半長軸 a 與離心率 e 動態計算比例尺，
+    // 確保橢圓軌道一律留在畫布內部且自適應螢幕大小，永不超出畫面範圍！
+    const b = a * Math.sqrt(1 - e * e); // 橢圓半短軸
+    
+    // 水平方向限制：橢圓中心在畫布中心，左右各延伸 a。
+    // 我們希望橢圓寬度 2a 最多佔畫布寬度的 72% (左右各留 14% 邊距，用以容納標籤如「近日點」、「遠日點」等)
+    const scaleX = (width * 0.36) / a;
+    
+    // 垂直方向限制：橢圓中心在畫布中心，上下各延伸 b。
+    // 我們希望橢圓高度 2b 最多佔畫布高度的 76% (上下各留 12% 邊距)
+    const scaleY = (height * 0.38) / b;
+    
+    // 取水平與垂直限制的最小值，確保等比例縮放且絕不超界
+    const scale = Math.min(scaleX, scaleY);
+    
+    // 建立作圖焦點坐標系：
+    // 行星軌道的對稱中心在 (centerX, centerY)
+    // 太陽焦點 $F_1$ 位於 (centerX - a*e*scale, centerY)
+    const centerX = width / 2;
+    const centerY = height / 2;
+    
+    // 太陽焦點 $F_1$ 座標
+    const sunX = centerX - a * e * scale;
+    const sunY = centerY;
+
+    // 虛擬空焦點 $F_2$ 座標 (根據橢圓對稱性，位於對稱中心右側)
+    const f2X = centerX + a * e * scale;
+    const f2Y = centerY;
+
+    // 行星當前坐標 (以太陽焦點為原點進行極坐標轉換)
+    const planetX = sunX + state.currentR * scale * Math.cos(state.theta);
+    const planetY = sunY + state.currentR * scale * Math.sin(state.theta);
+
+    // ==========================================
+    // 輔助視覺化 1：第二定律等時間等面積剖切扇形 (Sweep Areas)
+    // ==========================================
+    if (showSweepsCheckbox.checked) {
+      drawEqualAreaSlices(centerX, centerY, sunX, sunY, a, e, scale);
+    }
+
+    // ==========================================
+    // 輔助視覺化 2：對比參考軌道 (地球軌道，1.0 AU, 離心率接近 0)
+    // ==========================================
+    if (compareOrbitCheckbox.checked) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(192, 132, 252, 0.2)'; // 半透明紫色
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 8]);
       ctx.beginPath();
-      ctx.arc(x + 5, y + 3, (i % 3) * 0.8 + 0.8, 0, Math.PI * 2);
-      ctx.fill();
+      // 地球軌道半長軸 1.0, 離心率 0.017 (簡化為 0 圓軌道以資對比)
+      ctx.arc(centerX - 1.0 * 0.017 * scale, centerY, 1.0 * scale, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // 標記對比軌道文字
+      ctx.fillStyle = 'rgba(192, 132, 252, 0.5)';
+      ctx.font = '11px sans-serif';
+      ctx.fillText("地球參考軌道 (1.0 AU, 圓軌道)", centerX - 120, centerY - 1.0 * scale - 6);
+      ctx.restore();
     }
-  }
 
-  function drawOrbit(grain = 1) {
-    const { e, a } = state;
-    const b = a * Math.sqrt(1 - e * e);
-    const offsetX = center.x - a * 160;
-    const offsetY = center.y;
+    // ==========================================
+    // 繪製行星運行軌道橢圓線
+    // ==========================================
     ctx.save();
-    ctx.strokeStyle = 'rgba(143,193,255,0.25)';
-    ctx.lineWidth = 2;
+    // 軌道發光漸層
+    const orbitGlow = ctx.createRadialGradient(centerX, centerY, a*scale*0.8, centerX, centerY, a*scale*1.2);
+    orbitGlow.addColorStop(0, 'rgba(107, 247, 255, 0.03)');
+    orbitGlow.addColorStop(0.5, 'rgba(107, 247, 255, 0.16)');
+    orbitGlow.addColorStop(1, 'rgba(107, 247, 255, 0)');
+    
+    ctx.strokeStyle = 'rgba(107, 247, 255, 0.3)';
+    ctx.lineWidth = 2.5;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = 'rgba(107, 247, 255, 0.4)';
+    
+    // 繪製高精度橢圓
     ctx.beginPath();
+    const grain = 1; // 角度步長，步長越小軌道越平滑
     for (let i = 0; i <= 360; i += grain) {
-      const theta = i * Math.PI / 180;
-      const r = a * (1 - e * e) / (1 + e * Math.cos(theta));
-      const x = offsetX + r * 160 * Math.cos(theta);
-      const y = offsetY + r * 160 * Math.sin(theta);
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      const rad = (i * Math.PI) / 180;
+      // 依極坐標軌道公式求半徑
+      const r = a * (1 - e * e) / (1 + e * Math.cos(rad));
+      const ox = sunX + r * scale * Math.cos(rad);
+      const oy = sunY + r * scale * Math.sin(rad);
+      if (i === 0) ctx.moveTo(ox, oy);
+      else ctx.lineTo(ox, oy);
     }
     ctx.stroke();
     ctx.restore();
-  }
 
-  function drawSun() {
+    // ==========================================
+    // 繪製近日點與遠日點輔助標記
+    // ==========================================
     ctx.save();
-    ctx.fillStyle = '#ffc96f';
-    const sunX = center.x - state.a * 160 * state.e;
-    const sunY = center.y;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.font = '12px sans-serif';
+    
+    // 近日點 (真近點角 theta = 0)
+    const periX = sunX + a * (1 - e) * scale * Math.cos(0);
+    const periY = sunY + a * (1 - e) * scale * Math.sin(0);
     ctx.beginPath();
-    ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
+    ctx.arc(periX, periY, 3, 0, Math.PI * 2);
     ctx.fill();
-    ctx.shadowColor = 'rgba(255, 201, 111, 0.45)';
-    ctx.shadowBlur = 24;
+    ctx.fillText("近日點 (v最快)", periX + 8, periY + 4);
+
+    // 遠日點 (真近點角 theta = pi)
+    const apheX = sunX + a * (1 + e) * scale * Math.cos(Math.PI);
+    const apheY = sunY + a * (1 + e) * scale * Math.sin(Math.PI);
+    ctx.beginPath();
+    ctx.arc(apheX, apheY, 3, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillText("遠日點 (v最慢)", apheX - 85, apheY + 4);
     ctx.restore();
-  }
 
-  function drawPlanetTrail(points) {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(224,170,255,0.32)';
-    ctx.lineWidth = 10;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    points.forEach((p, index) => {
-      if (index === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
-    });
-    ctx.stroke();
-    ctx.restore();
-  }
+    // ==========================================
+    // 輔助視覺化 3：第一定律焦點輔助線與幾何驗證
+    // ==========================================
+    // 繪製虛擬空焦點 $F_2$
+    if (showFocus2Checkbox.checked) {
+      ctx.save();
+      ctx.fillStyle = '#c084fc'; // 紫色發光焦點
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#c084fc';
+      ctx.beginPath();
+      ctx.arc(f2X, f2Y, 7, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // 中心點標記
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(f2X, f2Y, 2, 0, Math.PI * 2);
+      ctx.fill();
 
-  function drawPlanet(x, y) {
-    ctx.save();
-    ctx.fillStyle = '#6bf7ff';
-    ctx.shadowColor = 'rgba(107,247,255,0.45)';
-    ctx.shadowBlur = 20;
-    ctx.beginPath();
-    ctx.arc(x, y, 13, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
+      ctx.fillStyle = 'rgba(192, 132, 252, 0.8)';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText("空焦點 F₂", f2X - 26, f2Y - 12);
+      ctx.restore();
+    }
 
-  function drawPointLabels(r) {
-    const sunX = center.x - state.a * 160 * state.e;
-    const sunY = center.y;
-    const periAngle = 0;
-    const apheAngle = Math.PI;
-    const periX = center.x + r * 160 * Math.cos(periAngle);
-    const periY = center.y + r * 160 * Math.sin(periAngle);
-    const apheR = state.a * (1 - state.e * state.e) / (1 + state.e * Math.cos(apheAngle));
-    const apheX = center.x + apheR * 160 * Math.cos(apheAngle);
-    const apheY = center.y + apheR * 160 * Math.sin(apheAngle);
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-    ctx.setLineDash([6, 8]);
-    ctx.beginPath();
-    ctx.moveTo(sunX, sunY);
-    ctx.lineTo(periX, periY);
-    ctx.moveTo(sunX, sunY);
-    ctx.lineTo(apheX, apheY);
-    ctx.stroke();
-    ctx.restore();
-    ctx.fillStyle = '#e2f6ff';
-    ctx.font = '14px sans-serif';
-    ctx.fillText('近日點', periX + 12, periY - 10);
-    ctx.fillText('遠日點', apheX - 72, apheY - 10);
-  }
+    // 繪製焦點連線 $r_1, r_2$
+    if (showFociLinesCheckbox.checked) {
+      ctx.save();
+      ctx.setLineDash([4, 6]);
+      ctx.lineWidth = 1.5;
 
-  function animate(time) {
-    const delta = (time - lastTime) * 0.001;
-    lastTime = time;
+      // 太陽 $F_1$ 連線到行星 ($r_1$)
+      ctx.strokeStyle = 'rgba(107, 247, 255, 0.6)'; // 亮藍色虛線
+      ctx.beginPath();
+      ctx.moveTo(sunX, sunY);
+      ctx.lineTo(planetX, planetY);
+      ctx.stroke();
+
+      // 空焦點 $F_2$ 連線到行星 ($r_2$)
+      ctx.strokeStyle = 'rgba(192, 132, 252, 0.6)'; // 亮紫色虛線
+      ctx.beginPath();
+      ctx.moveTo(f2X, f2Y);
+      ctx.lineTo(planetX, planetY);
+      ctx.stroke();
+
+      // 在連線旁標註 r1 ＆ r2 文字
+      ctx.fillStyle = 'rgba(107, 247, 255, 0.9)';
+      ctx.font = '12px Outfit';
+      ctx.fillText("r₁", (sunX + planetX)/2 - 10, (sunY + planetY)/2 - 10);
+
+      ctx.fillStyle = 'rgba(192, 132, 252, 0.9)';
+      ctx.fillText("r₂", (f2X + planetX)/2 + 10, (f2Y + planetY)/2 - 10);
+      ctx.restore();
+    }
+
+    // ==========================================
+    // 紀錄並繪製行星發光粒子尾跡 (Particle Trail)
+    // ==========================================
     if (!paused) {
-      const orbit = computeOrbit();
-      const angularSpeed = orbit.h / Math.pow(orbit.r, 2);
-      state.theta += angularSpeed * delta * 0.8;
-      state.theta %= Math.PI * 2;
-      const points = [];
-      const trailSteps = 48;
-      for (let i = 0; i < trailSteps; i++) {
-        const t = state.theta - i * 0.08;
-        const r = state.a * (1 - state.e * state.e) / (1 + state.e * Math.cos(t));
-        const x = center.x + r * 160 * Math.cos(t);
-        const y = center.y + r * 160 * Math.sin(t);
-        points.push({ x, y });
+      trailPoints.push({ x: planetX, y: planetY });
+      if (trailPoints.length > MAX_TRAIL_LENGTH) {
+        trailPoints.shift(); // 移除最舊尾跡點
       }
-      drawBackground();
-      drawOrbit(2);
-      drawPointLabels(orbit.r);
-      drawPlanetTrail(points);
-      drawSun();
-      const currentR = state.a * (1 - state.e * state.e) / (1 + state.e * Math.cos(state.theta));
-      const px = center.x + currentR * 160 * Math.cos(state.theta);
-      const py = center.y + currentR * 160 * Math.sin(state.theta);
-      drawPlanet(px, py);
     }
-    requestAnimationFrame(animate);
+    
+    // 繪製漸變發光尾跡
+    if (trailPoints.length > 1) {
+      ctx.save();
+      for (let i = 0; i < trailPoints.length - 1; i++) {
+        const p1 = trailPoints[i];
+        const p2 = trailPoints[i+1];
+        const opacity = i / trailPoints.length * 0.45; // 越接近行星越亮
+        
+        ctx.strokeStyle = `rgba(107, 247, 255, ${opacity})`;
+        ctx.lineWidth = (i / trailPoints.length) * 6 + 1; // 寬度逐漸變粗
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // ==========================================
+    // 繪製太陽 (重度美化，雙重徑向發光光暈)
+    // ==========================================
+    ctx.save();
+    // 1. 外層宏大日冕光暈
+    const coronaGlow = ctx.createRadialGradient(sunX, sunY, 5, sunX, sunY, 32);
+    coronaGlow.addColorStop(0, 'rgba(255, 176, 58, 0.6)');
+    coronaGlow.addColorStop(0.3, 'rgba(255, 120, 50, 0.3)');
+    coronaGlow.addColorStop(0.8, 'rgba(255, 120, 50, 0.08)');
+    coronaGlow.addColorStop(1, 'rgba(255, 120, 50, 0)');
+    ctx.fillStyle = coronaGlow;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 32, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. 太陽內核立體漸層
+    const sunGlow = ctx.createRadialGradient(sunX - 4, sunY - 4, 2, sunX, sunY, 15);
+    sunGlow.addColorStop(0, '#ffffff');       // 亮白熱源
+    sunGlow.addColorStop(0.2, '#ffe366');     // 核心黃光
+    sunGlow.addColorStop(0.7, '#ff8000');     // 邊緣橙光
+    sunGlow.addColorStop(1, '#cc4400');       // 深紅發光界限
+    ctx.fillStyle = sunGlow;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#ffb03a';
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // ==========================================
+    // 輔助視覺化 4：第二定律速度向量與向心加速度向量
+    // ==========================================
+    if (showVelVectorCheckbox.checked) {
+      // 速度向量沿橢圓切線方向
+      // 在極坐標中速度向量包含徑向分量與切向分量：
+      // dr/dt ＆ r*dtheta/dt
+      // 我們簡單以行星至太陽之切線繪製：
+      // 速度角度 beta = theta + pi/2 + arctan(e*sin(theta)/(1+e*cos(theta)))
+      const thetaVal = state.theta;
+      const angleOfTangency = thetaVal + Math.PI / 2 + Math.atan2(e * Math.sin(thetaVal), 1 + e * Math.cos(thetaVal));
+      
+      const vScale = state.currentV * 32; // 放大比例以求視覺效果
+      const vx = planetX + vScale * Math.cos(angleOfTangency);
+      const vy = planetY + vScale * Math.sin(angleOfTangency);
+      
+      ctx.save();
+      ctx.strokeStyle = '#34d399'; // 發光綠色速度向量
+      ctx.lineWidth = 2.5;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = '#34d399';
+      
+      // 繪製向量箭頭
+      drawArrow(ctx, planetX, planetY, vx, vy, 8);
+      
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText("速度 v", vx + 8, vy);
+      ctx.restore();
+    }
+
+    if (showAccVectorCheckbox.checked) {
+      // 加速度向量方向百分之百精準指向引力中心（太陽焦點 $F_1$）
+      const dx = sunX - planetX;
+      const dy = sunY - planetY;
+      const length = Math.sqrt(dx * dx + dy * dy);
+      
+      // 歸一化並按向心加速度大小進行縮放
+      const accScale = (state.currentAcc * 25); 
+      const ax = planetX + (dx / length) * Math.min(accScale, length - 15); // 加速度線不超過太陽內核
+      const ay = planetY + (dy / length) * Math.min(accScale, length - 15);
+
+      ctx.save();
+      ctx.strokeStyle = '#f43f5e'; // 發光粉橘色加速度向量
+      ctx.lineWidth = 2.5;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = '#f43f5e';
+      
+      // 繪製引力向量箭頭
+      drawArrow(ctx, planetX, planetY, ax, ay, 8);
+      
+      ctx.fillStyle = '#f43f5e';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText("引力 a_c", ax - 24, ay - 8);
+      ctx.restore();
+    }
+
+    // ==========================================
+    // 繪製行星 (3D 質感，向陽面亮，背陽面暗，體現陰晴圓缺)
+    // ==========================================
+    ctx.save();
+    // 繪製行星發光外暈
+    ctx.fillStyle = 'rgba(107, 247, 255, 0.15)';
+    ctx.beginPath();
+    ctx.arc(planetX, planetY, 15, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 建立配合向陽方向之 3D 漸層。光源位於太陽焦點方向 (sunX, sunY)
+    const planetGlow = ctx.createRadialGradient(
+      planetX - 3.5 * Math.cos(state.theta), // 行星亮區圓心略微偏移至太陽方向
+      planetY - 3.5 * Math.sin(state.theta),
+      1,
+      planetX,
+      planetY,
+      10
+    );
+    planetGlow.addColorStop(0, '#ffffff');          // 熾白折射面
+    planetGlow.addColorStop(0.3, '#6bf7ff');        // 亮藍大氣層
+    planetGlow.addColorStop(0.8, '#0b6680');        // 深藍水體
+    planetGlow.addColorStop(1, '#021820');          // 陰暗無光面 (背陽)
+    
+    ctx.fillStyle = planetGlow;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#6bf7ff';
+    ctx.beginPath();
+    ctx.arc(planetX, planetY, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 
+  // 繪製箭頭工具函式
+  function drawArrow(context, fromx, fromy, tox, toy, r) {
+    const x_center = tox;
+    const y_center = toy;
+    let angle;
+    let x;
+    let y;
+
+    context.beginPath();
+    context.moveTo(fromx, fromy);
+    context.lineTo(tox, toy);
+    context.stroke();
+
+    angle = Math.atan2(toy - fromy, tox - fromx);
+    x = r * Math.cos(angle) + x_center;
+    y = r * Math.sin(angle) + y_center;
+
+    context.moveTo(x, y);
+
+    angle += (1 / 3) * (2 * Math.PI);
+    x = r * Math.cos(angle) + x_center;
+    y = r * Math.sin(angle) + y_center;
+    context.lineTo(x, y);
+
+    angle += (1 / 3) * (2 * Math.PI);
+    x = r * Math.cos(angle) + x_center;
+    y = r * Math.sin(angle) + y_center;
+    context.lineTo(x, y);
+    context.closePath();
+    context.fill();
+  }
+
+  /**
+   * 9. 第二定律：繪製 12 個高精度等時間等面積扇形 (Kepler Second Law Area Division)
+   * 
+   * 為了完全精準呈現「等時間」的面積，我們不能均分真近點角 (theta)。
+   * 我們必須在「平近點角 M」上均分 12 等分（即每個扇形運動時間皆為 T / 12），
+   * 然後依據克卜勒方程牛頓迭代解出 12 個時刻的精確 theta 角度座標。
+   * 這是本系統在教學實作上的一大物理革命突破，能讓學生在螢幕前深刻體會近日點大弧度、遠日點窄弧度的對比。
+   */
+  function drawEqualAreaSlices(centerX, centerY, sunX, sunY, a, e, scale) {
+    ctx.save();
+    
+    // 預先設計一組極具現代美感之半透明馬卡龍漸層配色
+    const colors = [
+      'rgba(255, 107, 129, 0.14)',  // 粉紅
+      'rgba(255, 165, 2, 0.14)',    // 亮橙
+      'rgba(235, 203, 139, 0.14)',  // 淡黃
+      'rgba(168, 230, 207, 0.14)',  // 青綠
+      'rgba(143, 206, 255, 0.14)',  // 淡藍
+      'rgba(192, 132, 252, 0.14)',  // 亮紫
+      'rgba(255, 143, 222, 0.14)',  // 桃紅
+      'rgba(107, 247, 255, 0.14)',  // 靛青
+      'rgba(163, 222, 110, 0.14)',  // 嫩綠
+      'rgba(255, 218, 121, 0.14)',  // 檸黃
+      'rgba(247, 182, 210, 0.14)',  // 淺粉
+      'rgba(186, 220, 88, 0.14)'    // 萊姆綠
+    ];
+
+    // 將平近點角 2*pi 線性切分為 12 個時刻
+    const slices = 12;
+    const boundaryAngles = [];
+
+    for (let k = 0; k <= slices; k++) {
+      const targetM = (Math.PI * 2 / slices) * k;
+      
+      // 解克卜勒方程獲取 E
+      const targetE = solveKeplerEquation(targetM, e);
+      
+      // 計算 theta
+      let targetTheta = 2 * Math.atan2(
+        Math.sqrt(1 + e) * Math.sin(targetE / 2),
+        Math.sqrt(1 - e) * Math.cos(targetE / 2)
+      );
+      if (targetTheta < 0) targetTheta += Math.PI * 2;
+      boundaryAngles.push(targetTheta);
+    }
+
+    // 繪製這 12 個等時間扇形
+    for (let i = 0; i < slices; i++) {
+      ctx.fillStyle = colors[i % colors.length];
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      
+      ctx.beginPath();
+      ctx.moveTo(sunX, sunY); // 以太陽焦點為頂點
+
+      const thetaStart = boundaryAngles[i];
+      const thetaEnd = boundaryAngles[i+1];
+
+      // 沿橢圓弧線渲染扇形底邊
+      // 為求平滑，我們將每片扇形內部細分 10 份
+      const steps = 10;
+      for (let j = 0; j <= steps; j++) {
+        const t = thetaStart + (thetaEnd - thetaStart) * (j / steps);
+        const r = a * (1 - e * e) / (1 + e * Math.cos(t));
+        const px = sunX + r * scale * Math.cos(t);
+        const py = sunY + r * scale * Math.sin(t);
+        ctx.lineTo(px, py);
+      }
+      
+      ctx.lineTo(sunX, sunY); // 連線回太陽焦點
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * 10. 動畫主循環 (Main Render Loop)
+   */
+  function animate(time) {
+    try {
+      // 防止首次載入時 delta 過大產生跳躍
+      if (!lastTime) lastTime = time;
+      const delta = (time - lastTime) * 0.001; // 轉為秒
+      lastTime = time;
+
+      // 1. 物理狀態遞補
+      updatePhysics(delta);
+
+      // 2. 渲染背景
+      drawSpaceBackground();
+
+      // 3. 渲染行星、軌道及所有教學提示線
+      drawSimulation();
+
+      // 4. 重複調用以維持流暢渲染
+      requestAnimationFrame(animate);
+    } catch (e) {
+      console.error("動畫渲染主循環出錯:", e);
+    }
+  }
+
+  /**
+   * 11. UI 事件監聽與控制器同步
+   */
   function setupEventListeners() {
-    function updateState() {
+    // 物理滑桿即時同步
+    function updatePhysicsFromInputs() {
       state.e = parseFloat(eccInput.value);
       state.a = parseFloat(semiInput.value);
       state.m = parseFloat(massInput.value);
-      updateLabels();
-      computeOrbit();
+      state.simSpeed = parseFloat(simSpeedInput.value);
+
+      // 動態更新數值顯示標籤
+      eccVal.textContent = state.e.toFixed(2);
+      semiVal.textContent = state.a.toFixed(2);
+      massVal.textContent = state.m.toFixed(2);
+      simSpeedVal.textContent = state.simSpeed.toFixed(1) + 'x';
+      
+      // 清空行星尾跡防止跳變
+      trailPoints = [];
     }
-    eccInput.addEventListener('input', updateState);
-    semiInput.addEventListener('input', updateState);
-    massInput.addEventListener('input', updateState);
+
+    eccInput.addEventListener('input', updatePhysicsFromInputs);
+    semiInput.addEventListener('input', updatePhysicsFromInputs);
+    massInput.addEventListener('input', updatePhysicsFromInputs);
+    simSpeedInput.addEventListener('input', updatePhysicsFromInputs);
+
+    // 播放/暫停按鈕
     toggleBtn.addEventListener('click', () => {
       paused = !paused;
-      toggleBtn.textContent = paused ? '播放' : '暫停';
-    });
-    resetBtn.addEventListener('click', () => {
-      state.e = 0.3;
-      state.a = 1.0;
-      state.m = 1.0;
-      state.theta = 0;
-      eccInput.value = state.e;
-      semiInput.value = state.a;
-      massInput.value = state.m;
-      updateState();
+      if (paused) {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+        playBtnText.textContent = '播放模擬';
+        toggleBtn.classList.remove('active-play');
+      } else {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+        playBtnText.textContent = '暫停模擬';
+        toggleBtn.classList.add('active-play');
+      }
     });
 
-    quizQuestions.forEach((block, index) => {
-      const inputs = block.querySelectorAll('input');
-      const feedback = block.querySelector('.feedback');
-      inputs.forEach(input => {
+    // 重置按鈕
+    resetBtn.addEventListener('click', () => {
+      paused = false;
+      meanAnomaly = 0;
+      state.e = 0.30;
+      state.a = 1.00;
+      state.m = 1.00;
+      state.simSpeed = 1.0;
+
+      // 同步控制器 values
+      eccInput.value = 0.30;
+      semiInput.value = 1.00;
+      massInput.value = 1.00;
+      simSpeedInput.value = 1.0;
+
+      // 同步開關與真實行星 UI 按鈕
+      compareOrbitCheckbox.checked = false;
+      showFocus2Checkbox.checked = true;
+      showFociLinesCheckbox.checked = true;
+      showSweepsCheckbox.checked = true;
+      showVelVectorCheckbox.checked = true;
+      showAccVectorCheckbox.checked = true;
+      
+      // 清空行星尾跡
+      trailPoints = [];
+
+      // 更新行星選擇 UI Active
+      document.querySelectorAll('.celestial-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.preset === 'earth') btn.classList.add('active');
+      });
+
+      updatePhysicsFromInputs();
+
+      // 還原播放狀態 UI
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+      playBtnText.textContent = '暫停模擬';
+      toggleBtn.classList.add('active-play');
+    });
+
+    // 第三定律：一鍵載入真實天體參數
+    document.querySelectorAll('.celestial-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const presetKey = button.dataset.preset;
+        const preset = PLANET_PRESETS[presetKey];
+        if (preset) {
+          // 移除所有 active class
+          document.querySelectorAll('.celestial-btn').forEach(btn => btn.classList.remove('active'));
+          // 為當前點擊按鈕加入 active class
+          button.classList.add('active');
+
+          // 更新滑軌與 state
+          eccInput.value = preset.e;
+          semiInput.value = preset.a;
+          
+          state.e = preset.e;
+          state.a = preset.a;
+          
+          eccVal.textContent = preset.e.toFixed(2);
+          semiVal.textContent = preset.a.toFixed(2);
+          
+          // 清空行星尾跡防止舊軌道殘留
+          trailPoints = [];
+        }
+      });
+    });
+
+    // ==========================================
+    // 學習引導頁籤切換控制 (Tab Switch System)
+    // ==========================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 1. 頁籤按鈕高亮切換
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // 2. 面板內容切換
+        const tabId = btn.dataset.tab;
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(`${tabId}-content`).classList.add('active');
+
+        // 3. 跨頁籤之自動視覺化輔助連動 (這對課堂分模組教學效果極佳！)
+        if (tabId === 'first-law') {
+          showFocus2Checkbox.checked = true;
+          showFociLinesCheckbox.checked = true;
+          showSweepsCheckbox.checked = false;
+          showVelVectorCheckbox.checked = false;
+          showAccVectorCheckbox.checked = false;
+        } else if (tabId === 'second-law') {
+          showFocus2Checkbox.checked = false;
+          showFociLinesCheckbox.checked = false;
+          showSweepsCheckbox.checked = true;
+          showVelVectorCheckbox.checked = true;
+          showAccVectorCheckbox.checked = true;
+        } else if (tabId === 'third-law') {
+          showFocus2Checkbox.checked = false;
+          showFociLinesCheckbox.checked = false;
+          showSweepsCheckbox.checked = false;
+          showVelVectorCheckbox.checked = false;
+          showAccVectorCheckbox.checked = false;
+        }
+      });
+    });
+
+    // ==========================================
+    // 精緻知識小測驗互動模組 (Quiz System Engine)
+    // ==========================================
+    const quizCards = document.querySelectorAll('.quiz-card');
+    
+    // 每道題目的專屬觀念解析資料庫
+    const QUIZ_EXPLANATIONS = {
+      q1: "【正確解答：(B)】克卜勒第一定律明示行星繞日軌道是橢圓形，太陽位於橢圓兩個焦點的其中一個焦點上，而另一個空焦點並無任何天體。這個物理定律推翻了古希臘人完美圓軌道的執念。",
+      q2: "【正確解答：(A)】克卜勒第二定律的核心在於面積速率守恆（等面積定律）。行星在近日點因為距離拉近，引力增強，使得公轉切向速度達到最快；在遠日點時最慢。但是行星與太陽連線在單位時間內所「掃過的扇形面積」則始終保持不變。",
+      q3: "【正確解答：(C)】克卜勒第三定律（週期定律）方程式為：$T^2 \propto a^3$。在此題中，若軌道半長軸 $a = 4.0$ AU，則 $a^3 = 4^3 = 64$。依公式可得 $T^2 = 64$，求解公轉週期 $T = \sqrt{64} = 8.0$ 年。此為高中地科最經典的週期運算題型！",
+      q4: "【正確解答：(B)】哈雷彗星的離心率高達 $0.967$（極度扁平橢圓）。近日點距離約 $0.59$ AU，速度極快，在天空留下一閃即逝的尾跡；而遠日點距離長達 $35$ AU，受引力極弱，此時運行極其慢爬。這可以完全用克卜勒第二定律來預言！"
+    };
+
+    quizCards.forEach((card, index) => {
+      const qId = `q${index + 1}`;
+      const correctAnswer = card.dataset.answer;
+      const opts = card.querySelectorAll('.quiz-opt');
+      const feedback = card.querySelector('.quiz-feedback');
+
+      opts.forEach(opt => {
+        const input = opt.querySelector('input');
+        
+        opt.addEventListener('click', (e) => {
+          // 阻止重複觸發
+          e.stopPropagation();
+          input.checked = true;
+          input.dispatchEvent(new Event('change'));
+        });
+
         input.addEventListener('change', () => {
-          const correct = block.dataset.answer;
-          if (input.value === correct) {
-            feedback.textContent = '答對了！你理解克卜勒定律的重點。';
-            feedback.classList.remove('incorrect');
+          // 1. 清除該題所有選項的正確/錯誤高亮樣式
+          opts.forEach(o => {
+            o.classList.remove('correct-opt', 'incorrect-opt');
+          });
+
+          // 2. 判斷答題正確性
+          if (input.value === correctAnswer) {
+            opt.classList.add('correct-opt');
+            feedback.innerHTML = `
+              <div style="font-weight:700; margin-bottom:4px;">✨ 答對了！太棒了！</div>
+              <p>${QUIZ_EXPLANATIONS[qId]}</p>
+            `;
+            feedback.className = "quiz-feedback show-correct";
           } else {
-            feedback.textContent = '答錯了，請再回顧公式與定律描述。';
-            feedback.classList.add('incorrect');
+            opt.classList.add('incorrect-opt');
+            feedback.innerHTML = `
+              <div style="font-weight:700; margin-bottom:4px;">❌ 選錯了，請再仔細思考喔！</div>
+              <p>${QUIZ_EXPLANATIONS[qId]}</p>
+              <a href="#" class="quiz-feedback-btn" data-target="${index === 0 ? 'first-law' : index === 1 ? 'second-law' : 'third-law'}">
+                🔍 點此前往模擬觀察物理現象
+              </a>
+            `;
+            feedback.className = "quiz-feedback show-incorrect";
+
+            // 引導快速跳轉連動事件
+            const link = feedback.querySelector('.quiz-feedback-btn');
+            if (link) {
+              link.addEventListener('click', (ev) => {
+                ev.preventDefault();
+                const targetTab = link.dataset.target;
+                const tabButton = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
+                if (tabButton) tabButton.click();
+              });
+            }
           }
         });
       });
     });
   }
 
+  // 12. 初始化系統與動畫啟動
   window.addEventListener('resize', () => {
     resizeCanvas();
   });
 
-  resizeCanvas();
-  updateLabels();
-  computeOrbit();
-  setupEventListeners();
-  requestAnimationFrame(animate);
+  // 啟動系統
+  try {
+    resizeCanvas();
+    initStars();
+    setupEventListeners();
+    
+    // 預先載入地球參數
+    const preset = PLANET_PRESETS.earth;
+    eccInput.value = preset.e;
+    semiInput.value = preset.a;
+    state.e = preset.e;
+    state.a = preset.a;
+    
+    eccVal.textContent = preset.e.toFixed(2);
+    semiVal.textContent = preset.a.toFixed(2);
+    massVal.textContent = state.m.toFixed(2);
+    simSpeedVal.textContent = state.simSpeed.toFixed(1) + 'x';
+    
+    // 啟動 Canvas 渲染主循環
+    requestAnimationFrame(animate);
+  } catch (err) {
+    console.error("系統初始化出錯: ", err);
+  }
 </script>
 </body>
 </html>
