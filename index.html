@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>高中地科互動教材：克卜勒行星運動定律視覺化</title>
+<!-- 引入 MathJax 渲染 LaTeX 數學公式 -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 引入現代化字型：英文字型 Outfit 與中文字型 Noto Sans TC -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -698,9 +701,12 @@
 <main>
   <!-- 頁首標題區 -->
   <header class="glass">
-    <div class="header-title">
-      <h1>克卜勒行星運動定律互動教學</h1>
-      <p>高中地球科學 · 資訊與地科跨領域物理模擬互動教材</p>
+    <div class="header-title" style="display: flex; align-items: center; gap: 20px;">
+      <img src="nths.png" alt="楠梓高中校徽" style="height: 64px; width: auto; filter: drop-shadow(0 0 8px rgba(107, 247, 255, 0.35));" />
+      <div>
+        <h1>克卜勒行星運動定律互動教學</h1>
+        <p>高中物理與地球科學、資訊跨領域模擬互動教材</p>
+      </div>
     </div>
     <div class="badge-container">
       <span class="badge">108課綱對應</span>
@@ -812,7 +818,7 @@
           </div>
 
           <div class="switch-row">
-            <span>顯示焦點連線 (r₁ + r₂ = 2a)</span>
+            <span>顯示近/遠日點距離連線 (r₁, r₂)</span>
             <label class="switch-container">
               <input type="checkbox" id="showFociLines" checked>
               <span class="slider"></span>
@@ -821,15 +827,12 @@
         </div>
 
         <div class="info-block">
-          <!-- 動態幾何驗證 -->
-          <div class="formula-card" id="geometryCard" style="display: block;">
-            <div class="formula-title">橢圓幾何動態定義驗證：</div>
-            <div style="font-size:0.88rem; color:var(--text-secondary); margin-bottom: 6px;">
-              行星至太陽距離 <span style="color:#6bf7ff; font-weight:600;">r₁ = <span id="r1Val">1.00</span></span><br/>
-              行星至空焦點距離 <span style="color:#c084fc; font-weight:600;">r₂ = <span id="r2Val">1.00</span></span>
-            </div>
-            <div class="formula-body">
-              r₁ + r₂ = <span id="r1r2Sum">2.00</span> = 2a (常數)
+          <!-- 近/遠日點定義與驗證 -->
+          <div class="formula-card" id="geometryCard" style="display: block; border-left: 4px solid var(--accent-blue);">
+            <div class="formula-title">近日點與遠日點定義：</div>
+            <div style="font-size:0.88rem; color:var(--text-secondary); margin-bottom: 6px; line-height: 1.6;">
+              <span style="color:#6bf7ff; font-weight:600;">近日點 r₁</span>：行星運行軌道上距離太陽最近的點（\(r_1 = a(1-e) = <span id="r1Val">1.00</span>\) AU）。<br/>
+              <span style="color:#c084fc; font-weight:600;">遠日點 r₂</span>：行星運行軌道上距離太陽最遠的點（\(r_2 = a(1+e) = <span id="r2Val">1.00</span>\) AU）。
             </div>
           </div>
 
@@ -900,6 +903,16 @@
             <div class="formula-title">3. 面積定律公式：</div>
             <div class="formula-body">dA/dt = 1/2 · r² · (dθ/dt) = L / (2m) = 常數</div>
           </div>
+
+          <!-- 新增向量垂直性物理說明 -->
+          <div class="formula-card" style="margin-top: 12px; border-left: 4px solid var(--accent-orange);">
+            <div class="formula-title" style="color: var(--accent-orange); font-weight: 700;">💡 物理思考與觀察：向量垂直性</div>
+            <div style="font-size:0.88rem; color:var(--text-secondary); line-height: 1.5;">
+              觀察模擬中的向量：<strong>速度向量 \(\vec{v}\)（發光綠線）</strong>與<strong>向心加速度向量 \(\vec{a_c}\)（發光橘線）</strong>。<br/>
+              你會發現，在橢圓軌道上，這兩個向量<strong>並不恆垂直</strong>！只有當行星運行到<strong>近日點</strong>與<strong>遠日點</strong>時，兩者才會完全垂直。<br/>
+              在其他位置，加速度向量與速度向量的夾角不為 \(90^\circ\)，這意味著加速度在運動方向上有切向分量，這正是造成行星加速（往近日點移動）或減速（往遠日點移動）的原因。若為圓形軌道，兩者則恆垂直（切向加速度為零），故作等速率運動。
+            </div>
+          </div>
         </div>
       </div>
 
@@ -908,7 +921,11 @@
         <h2>克卜勒第三定律：週期定律</h2>
         <div class="intro-card">
           <strong>第三定律的核心觀念：</strong>
-          行星繞太陽公轉週期的平方（$T^2$）與軌道半長軸的立方（$a^3$）成正比。這代表距離太陽越遠的行星，不僅軌道越長，且平均運動速度越慢，週期會顯著拉長！
+          克卜勒第三定律（調和定律）指出：繞同一個中心天體運行的所有行星，其公轉週期的平方與橢圓軌道半長軸的立方成正比。其核心公式為：\(\frac{R^3}{T^2} = K\)<br/><br/>
+          <strong>參數說明：</strong><br/>
+          \(R\)：橢圓軌道的半長軸（若是圓形軌道，即為半徑）。<br/>
+          \(T\)：行星繞行一週的公轉週期。<br/>
+          \(K\)：常數。此常數僅與中心天體的質量有關，與繞行行星的質量無關。
         </div>
 
         <div class="control-group">
@@ -1268,17 +1285,9 @@
       speedText.textContent = v.toFixed(3);
       accText.textContent = acc.toFixed(3);
 
-      // 更新第一定律幾何驗證數值
-      r1ValSpan.textContent = r1.toFixed(3);
-      r2ValSpan.textContent = r2.toFixed(3);
-      r1r2SumSpan.textContent = (r1 + r2).toFixed(3);
-
-      // 更新第三定律物理驗證數值
-      const a3 = Math.pow(a, 3);
-      const t2 = Math.pow(period, 2);
-      a3ValSpan.textContent = a3.toFixed(3);
-      t2ValSpan.textContent = t2.toFixed(3);
-      t2a3RatioSpan.textContent = (t2 / a3).toFixed(3);
+      // 更新第一定律近/遠日點數值
+      r1ValSpan.textContent = q.toFixed(3);
+      r2ValSpan.textContent = Q.toFixed(3);
 
     } catch (err) {
       console.error("物理引擎計算出錯:", err);
@@ -1326,18 +1335,17 @@
     const e = state.e;
     const a = state.a;
 
-    // 比例尺因子：根據軌道半長軸 a 與離心率 e 動態計算比例尺，
-    // 確保橢圓軌道一律留在畫布內部且自適應螢幕大小，永不超出畫面範圍！
-    const b = a * Math.sqrt(1 - e * e); // 橢圓半短軸
+    // 比例尺因子：為了讓半長軸 a 改變時，畫布上的軌道大小能成比例縮放，
+    // 我們使用固定的參考半長軸 a_ref (軌道最大值 1.8) 來計算基準比例尺，而非使用動態的 a。
+    // 這能確保 a 變小時軌道在視覺上縮小，a 變大時軌道變大，且在最大軌道時仍能完美收納於畫布中。
+    const a_ref = 1.8;
+    const b_ref = a_ref * Math.sqrt(1 - e * e); // 參考短軸
     
-    // 水平方向限制：考量太陽焦點偏心量 (a*e) 與遠日點最大拉長距離 a*(1+e)，
-    // 最左端相對於畫布中心會延伸 a*(1+2e)。
-    // 我們調整 scaleX 計算公式，使其動態隨離心率 e 縮放，確保在極端離心率下軌道與文字標籤依然完美收納於畫布內。
-    const scaleX = (width * 0.33) / (a * (1 + e));
+    // 水平方向限制：考量太陽焦點偏心量與遠日點最大拉長距離
+    const scaleX = (width * 0.33) / (a_ref * (1 + e));
     
-    // 垂直方向限制：橢圓中心在畫布中心，上下各延伸 b。
-    // 我們希望橢圓高度 2b 最多佔畫布高度的 76% (上下各留 12% 邊距)
-    const scaleY = (height * 0.38) / b;
+    // 垂直方向限制：上下各延伸 b_ref
+    const scaleY = (height * 0.38) / b_ref;
     
     // 取水平與垂直限制的最小值，確保等比例縮放且絕不超界
     const scale = Math.min(scaleX, scaleY);
