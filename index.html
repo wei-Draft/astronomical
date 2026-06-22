@@ -831,8 +831,9 @@
           <div class="formula-card" id="geometryCard" style="display: block; border-left: 4px solid var(--accent-blue);">
             <div class="formula-title">近日點與遠日點定義：</div>
             <div style="font-size:0.88rem; color:var(--text-secondary); margin-bottom: 6px; line-height: 1.6;">
-              <span style="color:#6bf7ff; font-weight:600;">近日點 r₁</span>：行星運行軌道上距離太陽最近的點（\(r_1 = a(1-e) = <span id="r1Val">1.00</span>\) AU）。<br/>
-              <span style="color:#c084fc; font-weight:600;">遠日點 r₂</span>：行星運行軌道上距離太陽最遠的點（\(r_2 = a(1+e) = <span id="r2Val">1.00</span>\) AU）。
+              <span style="color:#6bf7ff; font-weight:600;">近日點 r₁ (或 r_min)</span>：行星運行軌道上距離太陽最近的點（\(r_1 = a(1-e) = <span id="r1Val">1.00</span>\) AU）。<br/>
+              <span style="color:#c084fc; font-weight:600;">遠日點 r₂ (或 r_max)</span>：行星運行軌道上距離太陽最遠的點（\(r_2 = a(1+e) = <span id="r2Val">1.00</span>\) AU）。<br/>
+              <span style="color:#a7f3d0; font-weight:600;">橢圓半長軸 r</span> 可表示為：\(r = (r_{\text{max}} + r_{\text{min}}) / 2\)
             </div>
           </div>
 
@@ -901,7 +902,7 @@
               行星與太陽的連線在單位時間內掃過的面積，稱為<strong>面積速率</strong>。因為角動量守恆，面積速率不隨時間而變，這就是第二定律的物理本質。
             </div>
             <div class="formula-title">3. 面積定律公式：</div>
-            <div class="formula-body">dA/dt = 1/2 · r² · (dθ/dt) = L / (2m) = 常數</div>
+            <div class="formula-body">掃過面積 / 時間間隔 = 定值</div>
           </div>
 
           <!-- 新增向量垂直性物理說明 -->
